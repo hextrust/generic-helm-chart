@@ -73,13 +73,13 @@ ingress:
   #         pathType: Prefix
 
 externalSecret:
-  enabled: false
-  # suffix: secret
-  # secretStore: secretstore-alpha
-  # secrets:
-    # - secretKey: password
-    #   remoteRef:
-    #     key: /book-keeping/postgresql/password
-    # - secretKey: username
-    #   remoteRef:
-    #     key: /book-keeping/postgresql/username
+  enabled: true
+  suffix: secret
+  secretStore: secretstore-alpha
+  secrets:
+    - secretKey: password
+      remoteRef:
+        key: /demo/postgresql/password
+    - secretKey: username
+      remoteRef:
+        key: /demo/postgresql/username
