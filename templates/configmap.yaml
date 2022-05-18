@@ -9,5 +9,7 @@ metadata:
   labels:
     {{- $labels | nindent 4 }}
 data:
-  {{- toYaml $val.data | nindent 4}}
+  {{- range $k, $v := $val.data }}
+    {{ $k }}: {{ $v | quote }}
+  {{- end }}  
 {{- end }}
