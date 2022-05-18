@@ -1,8 +1,9 @@
 nameOverride: "generic-helm-chart"
 fullnameOverride: "generic-helm-chart"
 
+## Labels attach to all resources
 # commonLabels:
-  # label: label
+#   label: label
 
 serviceAccount:
   create: true
@@ -26,6 +27,26 @@ deployment:
   nodeSelector: {}
   tolerations: []
   affinity: {}
+  ## Environment Variables attach to the pod directly
+  # env:
+  #   demo: demo
+  envFrom:
+    - type: configmap
+      suffix: config
+    - type: configmap
+      suffix: keycloak-config
+    - type: secret
+      suffix: secret
+
+configMap:
+  - suffix: config
+    data: 
+      test1: test1
+      test2: test2
+  - suffix: keycloak-config
+    data:
+      test3: test3
+      test4: test4
 
 service:
   type: ClusterIP
@@ -53,6 +74,7 @@ ingress:
 
 externalSecret:
   enabled: false
+  # suffix: secret
   # secretStore: secretstore-alpha
   # secrets:
     # - secretKey: password

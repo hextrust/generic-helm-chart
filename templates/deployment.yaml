@@ -38,7 +38,35 @@ spec:
               containerPort: {{ .containerPort }}
               protocol: {{ .protcol }}
             {{- end }}  
-          {{- end }}          
+          {{- end }}
+          env: 
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          {{- if .Values.deployment.env }}
+          {{- range $k, $v := .Values.deployment.env }}
+          - name: {{ $k }}
+            value: {{ $v }}
+          {{- end }}
+          {{- end }}
+          {{- if .Values.deployment.envFrom }}
+          envFrom:
+            {{- $fullname := include "app.fullname" . }}
+            {{- range $v := .Values.deployment.envFrom }}
+            {{- if eq $v.type "configmap" }}
+            - configMapRef:
+                name: {{ $fullname }}-{{ $v.suffix }}
+            {{- else if eq $v.type "secret" }}
+            - secretRef:
+                name: {{ $fullname }}-{{ $v.suffix }}
+            {{- end }}
+            {{- end }}
+          {{- end }}
           {{- with .Values.deployment.livenessProbe }}
           livenessProbe: 
             {{- toYaml . | nindent 12 }}
