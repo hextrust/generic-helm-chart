@@ -83,3 +83,30 @@ externalSecret:
     - secretKey: username
       remoteRef:
         key: /demo/postgresql/username
+
+goDBMigration:
+  enabled: true
+  externalSecret:
+    secretStore: secretstore-alpha
+    secrets:
+      - secretKey: gitlab_token_username
+        remoteRef:
+          key: /gitlab/metazen/accesstoken/username
+      - secretKey: gitlab_token_password
+        remoteRef:
+          key: /gitlab/metazen/accesstoken/password
+      - secretKey: username
+        remoteRef:
+          key: /demo/postgresql/dbmigration/username
+      - secretKey: password
+        remoteRef:
+          key: /demo/postgresql/dbmigration/password
+  job:
+    git:
+      path: "gitlab.int.hextech.io/602/db/migrations"
+      ref: "master"
+    imagePullSecrets:
+      - name: regcred
+    env:
+      DB_URL: ""
+      PGSSLMODE: "disable"
