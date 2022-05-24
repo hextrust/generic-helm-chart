@@ -22,7 +22,7 @@ spec:
     {{- end }}
   {{- end }}
   rules:
-    {{- range .Values.ingress.hosts }}
+    {{- with .Values.ingress.hosts }}
       {{- toYaml . | nindent 4 }}
     {{- end }}
 {{- end }}
