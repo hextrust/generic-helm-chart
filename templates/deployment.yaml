@@ -35,12 +35,20 @@ spec:
             {{- toYaml .Values.deployment.securityContext | nindent 12 }}
           image: "{{ .Values.deployment.image.repository }}:{{ .Values.deployment.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.deployment.image.pullPolicy }}
+          {{- with .Values.deployment.command }}
+          command:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.deployment.args }}
+          args:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           {{- if .Values.deployment.service }}
           ports:
             {{- range .Values.deployment.service.port }}
             - name: {{ .name }}
               containerPort: {{ .containerPort }}
-              protocol: {{ .protcol }}
+              protocol: {{ .protocol }}
             {{- end }}  
           {{- end }}
           env: 
@@ -81,6 +89,14 @@ spec:
           {{- end }}
           resources:
             {{- toYaml .Values.deployment.resources | nindent 12 }}
+          {{- with .Values.deployment.volumeMounts }}
+          volumeMounts:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      {{- with .Values.deployment.volumes }}
+      volumes:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       {{- with .Values.deployment.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
