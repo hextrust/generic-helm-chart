@@ -85,7 +85,7 @@ externalSecret:
         key: /demo/postgresql/username
 
 goDBMigration:
-  enabled: true
+  enabled: false
   externalSecret:
     secretStore: secretstore-alpha
     secrets:
