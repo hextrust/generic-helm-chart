@@ -25,11 +25,11 @@ deployment:
   securityContext: {}
   resources: 
     requests:
-      memory: 200Mi
-      cpu: 100m
+      memory: 400Mi
+      cpu: 200m
     limits:
-      memory: 200Mi
-      cpu: 100m
+      memory: 400Mi
+      cpu: 200m
   nodeSelector: {}
   tolerations: []
   affinity: {}
