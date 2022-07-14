@@ -43,12 +43,20 @@ deployment:
       suffix: keycloak-config
     - type: secret
       suffix: secret
+  # volumeMounts:
+  #   - mountPath: "/home/pvc"
+  #     name: soft-kms
+  # volumes:
+  #   - name: soft-kms
+  #     persistentVolumeClaim:
+  #       claimName: soft-kms
 
-# configMap:
-#   - suffix: config
-#     data: 
-#       test1: test1
-#       test2: test2
+
+configMap:
+  - suffix: config
+    data: 
+      test1: test1
+      test2: test2
 #   - suffix: keycloak-config
 #     data:
 #       test3: test3
@@ -79,7 +87,7 @@ ingress:
   #         pathType: Prefix
 
 externalSecret:
-  enabled: true
+  enabled: false
   suffix: secret
   secretStore: secretstore-alpha
   secrets:
@@ -116,3 +124,13 @@ goDBMigration:
     env:
       DB_URL: ""
       PGSSLMODE: "disable"
+
+volumes:
+  enabled: false
+  pvc:
+    - name: soft-kms
+      className: gp2
+      volumeMode: Filesystem
+      storage: 10Gi
+      accessModes: 
+        - ReadWriteOnce
