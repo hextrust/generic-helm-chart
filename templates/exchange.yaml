@@ -1,0 +1,37 @@
+{{- $fullname := include "app.fullname" . }}
+{{- $labels := include "app.labels" . }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ $fullname }}-exchange
+  labels:
+    {{- $labels | nindent 4 }}
+data:
+  sources:
+  {{- range $val := .Values.exchange.sources }}
+  - type: {{ $val.type }}
+    base_url: {{ $val.base_url }}
+    key: {{ $val.key }}
+    refresh_rate: {{ $val.refresh_rate }}
+    tickers: 
+      {{- range $tickers := $val.tickers }}
+      - {{ $tickers }}
+      {{- end }}
+    filter: 
+      remove:
+        {{- range $remove := $val.filter.remove }}
+        - {{ $remove }}
+        {{- end }}
+      remap:
+        {{- range $remap_key, $remap_val := $val.filter.remap }}
+        {{ $remap_key }}: {{ $remap_val | quote }}
+        {{- end }}
+      price_mapping:
+        {{- range $price_mapping_key, $v := $val.filter.price_mapping }}
+        {{ $price_mapping_key }}: 
+          {{- range $price_mapping_val := $v }}
+          - {{ $price_mapping_val }}
+          {{- end }}
+        {{- end }}
+  {{- end }}
