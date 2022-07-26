@@ -8,47 +8,6 @@ metadata:
   labels:
     {{- $labels | nindent 4 }}
 data:
-  {{- if .Values.exchange.sources }}
-  sources:
-  {{- range $layer1_k, $layer1_v := .Values.exchange.sources }}
-  {{- if eq $layer1_k "type" }}
-  - {{ $layer1_k }} : {{ $layer1_v }}
-  {{- else }}
-    {{- range $layer2_k, $layer2_v := $layer1_v }}
-    {{- if not layer2_v}}
-    {{ $layer1_k }}: {{ $layer1_v | quote }}
-
-
-    # handling if layer 2 exists
-    {{- else }}
-    {{ $layer1_k}}:
-      {{- range $layer3_k, $layer3_v := $layer2_v }}
-
-      {{- if not layer3_v }}
-      {{- if $layer2_v }}
-      {{ $layer2_k }}: {{ $layer2_v | quote }}
-      {{- else }}
-      - {{ $layer2_k}}
-      {{- end }} # if line 28
-
-
-      # handling if layer 3 exists
-      {{- else }}
-      {{ $layer2_k }}:
-        {{- range $layer3_k, $layer3_v := $layer2_v }}
-        {{- if $layer3_v }}
-        {{ $layer3_k }}: {{ $layer3_v | quote }}
-        {{- else }}
-        - {{ $layer3_k}}
-        {{- end }} # if line 39
-        {{- end }} # range line 38
-
-      {{- end }} # if line 27
-      {{- end }} # range line 25
-
-
-    {{- end }} # if line 18
-    {{- end }} # range line 17
-  {{- end }} # if line 14
-  {{- end }} # range line 13
-  {{- end }} # if line 11
+  {{- if .Values.exchange }}
+  exchange: {{ $exchange }}
+  {{- end}}
