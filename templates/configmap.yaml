@@ -11,5 +11,9 @@ metadata:
 data:
   {{- range $k, $v := $val.data }}
     {{ $k }}: {{ $v | quote }}
-  {{- end }}  
+    {{- if eq $k "file" }}
+    file: |-
+      {{ $v }}
+    {{- end }}
+  {{- end }}
 {{- end }}
