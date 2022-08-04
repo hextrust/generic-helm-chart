@@ -10,10 +10,10 @@ metadata:
     {{- $labels | nindent 4 }}
 data:
   {{- range $k, $v := $val.data }}
-  {{ $k }}: {{ $v | quote }}
-  {{- if eq $k "file" }}
-  file: |-
-    {{ $v }}
-  {{- end }}
+    {{ $k }}: {{ $v | quote }}
+    {{- if eq $k "file" }}
+    file: |-
+      {{ $v }}
+    {{- end }}
   {{- end }}
 {{- end }}
