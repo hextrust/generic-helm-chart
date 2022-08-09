@@ -1,4 +1,5 @@
-{{- if .Values.goDBMigration.enabled }}
+{{- $tag := .Values.deployment.image.tag }}
+{{- if and (.Values.goDBMigration.enabled) ($tag) }}
 {{- $job := .Values.goDBMigration.job }}
 apiVersion: batch/v1
 kind: Job
@@ -30,7 +31,7 @@ spec:
           command:
             - /bin/sh
             - -c
-            - migrate -source=gitlab://${GITLAB_TOKEN_USERNAME}:${GITLAB_TOKEN_PASSWORD}@{{ $job.git.path }}#{{ $job.git.ref }} -database=${DB_URL}/${DATABASE}?sslmode=${PGSSLMODE}\&search_path=${SCHEMA} up
+            - migrate -source=gitlab://${GITLAB_TOKEN_USERNAME}:${GITLAB_TOKEN_PASSWORD}@{{ $job.git.path }}#{{ $tag }} -database=${DB_URL}/${DATABASE}?sslmode=${PGSSLMODE}\&search_path=${SCHEMA} up
           env:
             - name: DB_URL
               value: {{ $job.env.DB_URL }}
