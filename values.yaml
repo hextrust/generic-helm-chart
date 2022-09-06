@@ -18,7 +18,9 @@ deployment:
     repository: ""
     pullPolicy: IfNotPresent
     tag: ""
+  livenessEnabled: true
   livenessProbe: {}
+  readinessEnabled: true
   readinessProbe: {}
   podAnnotations: {}
   podSecurityContext: {}

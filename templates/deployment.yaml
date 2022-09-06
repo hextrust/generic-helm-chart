@@ -79,13 +79,17 @@ spec:
             {{- end }}
             {{- end }}
           {{- end }}
+          {{- if .Values.deployment.livenessEnabled }}
           {{- with .Values.deployment.livenessProbe }}
           livenessProbe: 
             {{- toYaml . | nindent 12 }}
           {{- end }}
+          {{- end }}
+          {{- if .Values.deployment.readinessEnabled }}
           {{- with .Values.deployment.readinessProbe }}
           readinessProbe: 
             {{- toYaml . | nindent 12 }}
+          {{- end }}
           {{- end }}
           resources:
             {{- toYaml .Values.deployment.resources | nindent 12 }}
