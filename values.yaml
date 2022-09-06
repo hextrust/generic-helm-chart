@@ -23,6 +23,7 @@ deployment:
   readinessEnabled: true
   readinessProbe: {}
   podAnnotations: {}
+  serviceMesh: false
   podSecurityContext: {}
   securityContext: {}
   resources: 
