@@ -1,0 +1,7 @@
+include:
+  - project: technology/utils/cicd/gitlab-ci-pipeline-templates
+    ref: TECH-249/tagging
+    file:
+      - workflow.gitlab-ci.yml
+      - helm.gitlab-ci.yml
+      - release.gitlab-ci.yml
