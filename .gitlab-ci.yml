@@ -1,6 +1,6 @@
 include:
   - project: technology/utils/cicd/gitlab-ci-pipeline-templates
-    ref: TECH-249/tagging
+    ref: v2.0.3
     file:
       - workflow.gitlab-ci.yml
       - helm.gitlab-ci.yml
