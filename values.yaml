@@ -30,12 +30,6 @@ deployment:
     limits:
       memory: 400Mi
       cpu: 200m
-  autoscaling:
-    enabled: false
-    minReplicas: 1
-    maxReplicas: 10
-    targetCPUUtilizationPercentage: 80
-    targetMemoryUtilizationPercentage: 80
   nodeSelector: {}
   tolerations: []
   affinity: {}
@@ -114,6 +108,14 @@ externalSecret:
     - secretKey: username
       remoteRef:
         key: /demo/postgresql/username
+
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 80
 
 goDBMigration:
   enabled: false
