@@ -33,6 +33,11 @@ deployment:
   nodeSelector: {}
   tolerations: []
   affinity: {}
+  # service:
+  #   port:
+  #     - name: http-metric
+  #       containerPort: 8081
+  #       protocol: TCP
   ## Environment Variables attach to the pod directly
   # env:
   #   demo: demo
@@ -51,6 +56,7 @@ deployment:
   #     persistentVolumeClaim:
   #       claimName: soft-kms
   extraContainers: []
+    #### Example ####
     # - name: dummy-container
     #   image: alpine:3.8
     #   command: [sh, -c]
@@ -77,13 +83,17 @@ service:
   type: ClusterIP
   port: 
     - port: 8080
-      containerPort: 8080
       targetPort: http
+      protocol: TCP
+      name: http
+    - port: 8081
+      targetPort: http-metric
       protocol: TCP
       name: http
 
 ingress:
   enabled: false
+  #### Example ####
   # className: nginx
   # hosts:
   #   - host: demo.alpha.metazens.xyz
@@ -99,16 +109,16 @@ ingress:
 
 externalSecret:
   enabled: false
-  suffix: secret
-  secretStore: secretstore-alpha
-  secrets:
-    - secretKey: password
-      remoteRef:
-        key: /demo/postgresql/password
-    - secretKey: username
-      remoteRef:
-        key: /demo/postgresql/username
-
+  #### Example ####
+  # suffix: secret
+  # secretStore: secretstore-alpha
+  # secrets:
+  #   - secretKey: password
+  #     remoteRef:
+  #       key: /demo/postgresql/password
+  #   - secretKey: username
+  #     remoteRef:
+  #       key: /demo/postgresql/username
 
 autoscaling:
   enabled: false
@@ -116,39 +126,97 @@ autoscaling:
   maxReplicas: 10
   targetCPUUtilizationPercentage: 80
   targetMemoryUtilizationPercentage: 80
+  #### Example ####
+  # minReplicas: 1
+  # maxReplicas: 10
+  # targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
 
 goDBMigration:
   enabled: false
-  externalSecret:
-    secretStore: secretstore-alpha
-    secrets:
-      - secretKey: gitlab_token_username
-        remoteRef:
-          key: /gitlab/metazen/accesstoken/username
-      - secretKey: gitlab_token_password
-        remoteRef:
-          key: /gitlab/metazen/accesstoken/password
-      - secretKey: username
-        remoteRef:
-          key: /demo/postgresql/dbmigration/username
-      - secretKey: password
-        remoteRef:
-          key: /demo/postgresql/dbmigration/password
-  job:
-    git:
-      path: "gitlab.int.hextech.io/602/db/migrations"
-    imagePullSecrets:
-      - name: regcred
-    env:
-      DB_URL: ""
-      PGSSLMODE: "disable"
+  #### Example ####
+  # externalSecret:
+  #   secretStore: secretstore-alpha
+  #   secrets:
+  #     - secretKey: gitlab_token_username
+  #       remoteRef:
+  #         key: /gitlab/metazen/accesstoken/username
+  #     - secretKey: gitlab_token_password
+  #       remoteRef:
+  #         key: /gitlab/metazen/accesstoken/password
+  #     - secretKey: username
+  #       remoteRef:
+  #         key: /demo/postgresql/dbmigration/username
+  #     - secretKey: password
+  #       remoteRef:
+  #         key: /demo/postgresql/dbmigration/password
+  # job:
+  #   git:
+  #     path: "gitlab.int.hextech.io/602/db/migrations"
+  #   imagePullSecrets:
+  #     - name: regcred
+  #   env:
+  #     DB_URL: ""
+  #     PGSSLMODE: "disable"
 
 volumes:
   enabled: false
-  pvc:
-    - name: soft-kms
-      className: gp2
-      volumeMode: Filesystem
-      storage: 10Gi
-      accessModes: 
-        - ReadWriteOnce
+  #### Example ####
+  # pvc:
+  #   - name: soft-kms
+  #     className: gp2
+  #     volumeMode: Filesystem
+  #     storage: 10Gi
+  #     accessModes: 
+  #       - ReadWriteOnce
+
+serviceMonitor:
+  enabled: false
+  #### Example ####
+  # enabled: true
+  # prometheusName: metazen
+  # namespaceSelector:
+  #   kubernetes.io/metadata.name: metazen-alpha
+  # matchLabels:
+  #   app: infra-test
+  # endpoints:
+  #   - port: http
+  #     path: /metrics 
+  #     interval: 60s
+  #     honorLabels: true
+  #     scrapeTimeout: 10s
+  #     relabelings:
+  #       - action: keep
+  #         sourceLabels: [__meta_kubernetes_pod_container_name]
+  #         regex: "something"
+  #     metricRelabelings:
+  #       - sourceLabels: [__meta_kubernetes_service_label_cluster]
+  #         targetLabel: cluster
+  #         regex: (.*)
+  #         replacement: ${1}
+  #         action: replace
+
+podMonitor:
+  enabled: false
+  #### Example ####
+  # enabled: true
+  # namespaceSelector:
+  #   kubernetes.io/metadata.name: metazen-alpha
+  # matchLabels:
+  #   app: infra-test
+  # endpoints:
+  #   - port: http
+  #     path: /metrics 
+  #     interval: 60s
+  #     honorLabels: true
+  #     scrapeTimeout: 10s
+  #     relabelings:
+  #       - action: keep
+  #         sourceLabels: [__meta_kubernetes_pod_container_name]
+  #         regex: "something"
+  #     metricRelabelings:
+  #       - sourceLabels: [__meta_kubernetes_service_label_cluster]
+  #         targetLabel: cluster
+  #         regex: (.*)
+  #         replacement: ${1}
+  #         action: replace
