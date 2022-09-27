@@ -1,0 +1,40 @@
+{{- if .Values.podMonitor.enabled }}
+{{- $endpoints := .Values.podMonitor.endpoints }}
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: {{ include "app.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    release: prometheus
+    {{- include "app.labels" . | nindent 4 }}
+  {{- with .Values.podMonitor.annotations }}
+  annotations: {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- with .Values.podMonitor.namespaceSelector }}
+  namespaceSelector:
+  {{- toYaml . | nindent 4 }}
+  {{- end }}
+  selector:
+  {{- with .Values.podMonitor.matchLabels }}
+    matchLabels:
+      {{- toYaml . | nindent 6 }}
+  {{- end }}
+  podMetricsEndpoints:
+    {{- range $k, $v := $endpoints }}
+    - port: {{ $v.port | default "metrics" }}
+      path: {{ $v.path | default "/metrics" }}
+      interval: {{ $v.interval | default "60s" }}
+      honorLabels: {{ $v.honorLabels | default "true"  }}
+      scrapeTimeout: {{ $v.scrapeTimeout | default "30s" }}
+      {{- with $v.relabelings }}
+      relabelings:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with $v.metricRelabelings }}
+      metricRelabelings:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- end }}
+{{- end }}
