@@ -1,3 +1,4 @@
+{{- $values := . }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -33,7 +34,13 @@ spec:
         {{- toYaml .Values.deployment.podSecurityContext | nindent 8 }}
       {{- with .Values.deployment.initContainers }}
       initContainers:
-        {{- toYaml . | nindent 8 }}
+        {{- range . }}
+        {{- if eq .type "template" }}
+          {{- include .template $values | nindent 8 }}
+        {{- else }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+        {{- end }}
       {{- end }}
       containers:
         - name: {{ include "app.name" . }}
