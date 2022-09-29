@@ -1,6 +1,9 @@
 nameOverride: "generic-helm-chart"
 fullnameOverride: "generic-helm-chart"
 
+cluster: "-"
+environment: "-"
+
 ## Labels attach to all resources
 # commonLabels:
 #   label: label
