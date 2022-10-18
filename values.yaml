@@ -23,6 +23,7 @@ deployment:
     tag: ""
   livenessProbe: {}
   readinessProbe: {}
+  startupProbe: {}
   podAnnotations: {}
   podSecurityContext: {}
   securityContext: {}
