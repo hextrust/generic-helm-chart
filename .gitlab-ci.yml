@@ -1,6 +1,6 @@
 include:
   - project: technology/utils/cicd/gitlab-ci-pipeline-templates
-    ref: v2.0.3
+    ref: v2.5.0
     file:
       - workflow.gitlab-ci.yml
       - helm.gitlab-ci.yml
