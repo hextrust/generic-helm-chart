@@ -45,6 +45,31 @@ deployment:
   ## Environment Variables attach to the pod directly
   # env:
   #   demo: demo
+
+StatefulSet:
+  replicaCount: 1
+  imagePullSecrets:
+    - name: regcred
+  image:
+    repository: ""
+    pullPolicy: IfNotPresent
+    tag: ""
+  livenessProbe: {}
+  readinessProbe: {}
+  startupProbe: {}
+  podAnnotations: {}
+  podSecurityContext: {}
+  securityContext: {}
+  resources: 
+    requests:
+      memory: 400Mi
+      cpu: 200m
+    limits:
+      memory: 400Mi
+      cpu: 200m
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
   envFrom:
     - type: configmap
       suffix: config
@@ -52,9 +77,15 @@ deployment:
       suffix: keycloak-config
     - type: secret
       suffix: secret
-  # volumeMounts:
-  #   - mountPath: "/home/pvc"
-  #     name: soft-kms
+  volumeMounts:
+    - mountPath: "/db"
+      name: sqlite3
+  persistenceStorage:
+    name : sqlite3
+    accessMode: ["ReadWriteOnce"]
+    storageClass: gp3-retain
+    volumeMode: Filesystem
+    size : 500M
   # volumes:
   #   - name: soft-kms
   #     persistentVolumeClaim:
@@ -101,6 +132,7 @@ service:
       targetPort: http-metric
       protocol: TCP
       name: http
+
 
 ingress:
   enabled: false
@@ -156,6 +188,9 @@ autoscaling:
   # scaleTarget:
   #   apiVersion: argoproj.io/v1alpha1 OR apps/v1
   #   kind: Rollout OR Deployment
+
+rustDBMigration:
+  enabled: true
 
 goDBMigration:
   enabled: false

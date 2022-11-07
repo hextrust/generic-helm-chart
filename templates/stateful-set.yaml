@@ -1,35 +1,147 @@
+{{- $values := . }}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: web
+  name: {{ include "app.fullname" . }}
+  {{- if .Values.rustDBMigration.enabled }}
+  annotations:
+    argocd.argoproj.io/sync-wave: "4"
+  {{- end }}
+  labels:
+    {{- include "app.labels" . | nindent 4 }}
 spec:
+  
   selector:
     matchLabels:
-      app: nginx # has to match .spec.template.metadata.labels
-  serviceName: "nginx"
-  replicas: 3 # by default is 1
-  minReadySeconds: 10 # by default is 0
+      {{- include "app.selectorLabels" . | nindent 6 }}
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.StatefulSet.replicaCount }}
+  {{- end }}
   template:
     metadata:
+      {{- with .Values.StatefulSet.podAnnotations }}
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       labels:
-        app: nginx # has to match .spec.selector.matchLabels
+        checksum/config: {{ .Values.configMap | toYaml | sha1sum }}
+        {{- include "app.labels" . | nindent 8 }}
     spec:
-      terminationGracePeriodSeconds: 10
+      {{- with .Values.StatefulSet.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "app.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.StatefulSet.podSecurityContext | nindent 8 }}
+      {{- with .Values.StatefulSet.initContainers }}
+      initContainers:
+        {{- range . }}
+        {{- if eq .type "template" }}
+          {{- include .template $values | nindent 8 }}
+        {{- else }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+        {{- end }}
+      {{- end }}
       containers:
-      - name: nginx
-        image: registry.k8s.io/nginx-slim:0.8
-        ports:
-        - containerPort: 80
-          name: web
-        volumeMounts:
-        - name: www
-          mountPath: /usr/share/nginx/html
+        - name: {{ include "app.name" . }}
+          securityContext:
+            {{- toYaml .Values.StatefulSet.securityContext | nindent 12 }}
+          image: "{{ .Values.StatefulSet.image.repository }}:{{ .Values.StatefulSet.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.StatefulSet.image.pullPolicy }}
+          {{- with .Values.StatefulSet.command }}
+          command:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.StatefulSet.args }}
+          args:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- if .Values.StatefulSet.service }}
+          ports:
+            {{- range .Values.StatefulSet.service.port }}
+            - name: {{ .name }}
+              containerPort: {{ .containerPort }}
+              protocol: {{ .protocol }}
+            {{- end }}  
+          {{- end }}
+          env: 
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          {{- if .Values.StatefulSet.env }}
+          {{- range $k, $v := .Values.StatefulSet.env }}
+          - name: {{ $k }}
+            value: {{ $v }}
+          {{- end }}
+          {{- end }}
+          {{- if .Values.StatefulSet.envFrom }}
+          envFrom:
+            {{- $fullname := include "app.fullname" . }}
+            {{- range $v := .Values.StatefulSet.envFrom }}
+            {{- if eq $v.type "configmap" }}
+            - configMapRef:
+                name: {{ $fullname }}-{{ $v.suffix }}
+            {{- else if eq $v.type "secret" }}
+            - secretRef:
+                name: {{ $fullname }}-{{ $v.suffix }}
+            {{- end }}
+            {{- end }}
+          {{- end }}
+          {{- with .Values.StatefulSet.livenessProbe }}
+          livenessProbe: 
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.StatefulSet.readinessProbe }}
+          readinessProbe: 
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          resources:
+            {{- toYaml .Values.StatefulSet.resources | nindent 12 }}
+          {{- with .Values.StatefulSet.volumeMounts }}
+          volumeMounts:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+        {{- with .Values.StatefulSet.extraContainers }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- with .Values.StatefulSet.volumes }}
+      # volumes:
+      #   {{- toYaml . | nindent 8 }}
+      # {{- end }}
+      # {{- with .Values.StatefulSet.nodeSelector }}
   volumeClaimTemplates:
-  - metadata:
-      name: www
-    spec:
-      accessModes: [ "ReadWriteOnce" ]
-      storageClassName: "my-storage-class"
-      resources:
-        requests:
-          storage: 1Gi
+    - metadata:
+        name: {{ .Values.StatefulSet.persistenceStorage.name }}
+        labels: *Labels
+        {{- with $.Values.StatefulSet.annotations }}
+        annotations: {{- toYaml . | nindent 10 }}
+      spec:
+        volumeMode: {{ .Values.StatefulSet.persistenceStorage.volumeMode }}
+        accessModes:
+          - {{ .Values.StatefulSet.persistenceStorage.accessMode | quote }}
+      {{- if hasKey .Values.StatefulSet.persistenceStorage "storageClass" }}
+        storageClassName: {{ .Values.StatefulSet.persistenceStorage.storageClass | quote }}
+      {{- end }}
+        resources:
+          requests:
+            storage: {{ .Values.StatefulSet.persistenceStorage.size | quote }}
+    {{- end }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.StatefulSet.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.StatefulSet.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

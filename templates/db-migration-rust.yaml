@@ -31,7 +31,9 @@ spec:
           command:
             - /bin/sh
             - -c
-            - >
+            - > 
+              apt-get update \
+              && apt-get install -y sqlite3 libsqlite3-dev && \
               cargo install diesel_cli && \
               diesel migration run --database-url $DB_URL --migration-dir $MIGRATIONS_DIR
           env:
