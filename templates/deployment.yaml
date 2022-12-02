@@ -13,6 +13,10 @@ spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.deployment.replicaCount }}
   {{- end }}
+  {{- with .Values.deployment.strategy }}
+  strategy: 
+  {{- toYaml . | nindent 4 }}
+  {{- end }}
   selector:
     matchLabels:
       {{- include "app.selectorLabels" . | nindent 6 }}
@@ -40,7 +44,14 @@ spec:
         {{- if eq .type "template" }}
           {{- include .template $values | nindent 8 }}
         {{- else }}
-          {{- toYaml . | nindent 8 }}
+        - name: {{ .name }}
+          command: 
+            {{- toYaml .command | nindent 12 }}
+          image: {{ .image }}
+          {{- if .volumeMounts }}
+          volumeMounts:
+            {{- toYaml .volumeMounts | nindent 12 }}
+          {{- end }}
         {{- end }}
         {{- end }}
       {{- end }}
