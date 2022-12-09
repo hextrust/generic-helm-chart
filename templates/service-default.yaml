@@ -1,0 +1,9 @@
+{{- if .Values.deployment.serviceDefault.enabled -}}
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceDefaults
+metadata:
+  name: {{ include "app.fullname" . }}
+spec:
+  transparentProxy:
+    dialedDirectly: true
+{{- end }}

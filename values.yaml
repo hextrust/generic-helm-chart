@@ -25,6 +25,10 @@ deployment:
   readinessProbe: {}
   startupProbe: {}
   podAnnotations: {}
+  serviceDefault:
+    enabled: false
+  serviceIntention:
+    enabled: false
   podSecurityContext: {}
   securityContext: {}
   resources: 
