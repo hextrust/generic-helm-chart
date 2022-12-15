@@ -1,4 +1,4 @@
-{{- $tag := .Values.deployment.image.tag }}
+{{- $tag := (.Values.deployment.image).tag }}
 {{- if and (.Values.rustDBMigration.enabled) ($tag) }}
 {{- $job := .Values.rustDBMigration.job }}
 apiVersion: batch/v1
