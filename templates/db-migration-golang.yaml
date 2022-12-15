@@ -1,4 +1,4 @@
-{{- $tag := .Values.deployment.image.tag }}
+{{- $tag := (.Values.deployment.image).tag }}
 {{- if and (.Values.goDBMigration.enabled) ($tag) }}
 {{- $job := .Values.goDBMigration.job }}
 apiVersion: batch/v1
