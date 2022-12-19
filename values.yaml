@@ -24,7 +24,15 @@ deployment:
   livenessProbe: {}
   readinessProbe: {}
   startupProbe: {}
-  podAnnotations: {}
+  podAnnotations:
+    consul.hashicorp.com/consul-sidecar-cpu-limit: "125m"
+    consul.hashicorp.com/consul-sidecar-cpu-request: "25m"
+    consul.hashicorp.com/consul-sidecar-memory-limit: "150m"
+    consul.hashicorp.com/consul-sidecar-memory-request: "50Mi"
+  serviceDefault:
+    enabled: false
+  serviceIntention:
+    enabled: false
   podSecurityContext: {}
   securityContext: {}
   resources: 
