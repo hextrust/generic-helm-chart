@@ -140,6 +140,7 @@ service:
       targetPort: http-metric
       protocol: TCP
       name: http
+      serviceNameSuffix: metric
 
 
 ingress:

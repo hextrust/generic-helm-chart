@@ -1,17 +1,21 @@
+{{ range .Values.service.port }}
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "app.fullname" . }}
+  {{ if .serviceNameSuffix }}
+  name: {{ include "app.fullname" $ }}-{{ .serviceNameSuffix }}
+  {{ else }}
+  name: {{ include "app.fullname" $ }}
+  {{ end }}
   labels:
-    {{- include "app.labels" . | nindent 4 }}
+    {{- include "app.labels" $ | nindent 4 }}
 spec:
-  type: {{ .Values.service.type }}
+  type: {{ $.Values.service.type }}
   ports:
-    {{- range .Values.service.port }}
     - port: {{ .port }}
       targetPort: {{ .targetPort }}
       protocol: {{ .protocol }}
       name: {{ .name }}
-    {{- end }}  
   selector:
-    {{- include "app.selectorLabels" . | nindent 4 }}
+    {{- include "app.selectorLabels" $ | nindent 4 }}
+{{- end }}
