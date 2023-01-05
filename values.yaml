@@ -144,8 +144,13 @@ service:
       targetPort: http-metric
       protocol: TCP
       name: http
-  multiServices: 
-    enabled: false
+  multiServices:
+    enabled: true
+    port: 
+      - port: 8082
+        targetPort: http-admin
+        protocol: TCP
+        name: admin
   
 
 ingress:

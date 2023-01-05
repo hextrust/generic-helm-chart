@@ -1,27 +1,3 @@
-{{- if .Values.service.multiServices.enabled}}
-{{- range .Values.service.port }}
----
-apiVersion: v1
-kind: Service
-metadata:
-  {{- if .serviceNameSuffix }}
-  name: {{ include "app.fullname" $ }}-{{ .serviceNameSuffix }}
-  {{- else }}
-  name: {{ include "app.fullname" $ }}
-  {{- end }}
-  labels:
-    {{- include "app.labels" $ | nindent 4 }}
-spec:
-  type: {{ $.Values.service.type }}
-  ports:
-    - port: {{ .port }}
-      targetPort: {{ .targetPort }}
-      protocol: {{ .protocol }}
-      name: {{ .name }}
-  selector:
-    {{- include "app.selectorLabels" $ | nindent 4 }}
-{{- end }}
-{{- else}}
 apiVersion: v1
 kind: Service
 metadata:
@@ -39,4 +15,23 @@ spec:
     {{- end }}  
   selector:
     {{- include "app.selectorLabels" . | nindent 4 }}
+{{- if .Values.service.multiServices.enabled -}}
+{{- range .Values.service.multiServices.port }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "app.fullname" $ }}-{{ .name }}
+  labels:
+    {{- include "app.labels" $ | nindent 4 }}
+spec:
+  type: {{ $.Values.service.type }}
+  ports:
+    - port: {{ .port }}
+      targetPort: {{ .targetPort }}
+      protocol: {{ .protocol }}
+      name: {{ .name }} 
+  selector:
+    {{- include "app.selectorLabels" $ | nindent 4 }}
+{{- end }}
 {{- end }}
