@@ -15,8 +15,7 @@ serviceAccount:
   multiServiceAccounts: 
     enabled: false
     names:
-      - test1
-      - test2
+      - metric
 
 deployment:
   replicaCount: 1
