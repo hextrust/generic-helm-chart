@@ -145,7 +145,7 @@ service:
       protocol: TCP
       name: http
   multiServices:
-    enabled: true
+    enabled: false
     port: 
       - port: 8082
         targetPort: http-admin
