@@ -1,12 +1,13 @@
-{{ range .Values.service.port }}
+{{- range .Values.service.port }}
+---
 apiVersion: v1
 kind: Service
 metadata:
-  {{ if .serviceNameSuffix }}
+  {{- if .serviceNameSuffix }}
   name: {{ include "app.fullname" $ }}-{{ .serviceNameSuffix }}
-  {{ else }}
+  {{- else }}
   name: {{ include "app.fullname" $ }}
-  {{ end }}
+  {{- end }}
   labels:
     {{- include "app.labels" $ | nindent 4 }}
 spec:

@@ -142,7 +142,6 @@ service:
       name: http
       serviceNameSuffix: metric
 
-
 ingress:
   enabled: false
   #### Example ####
