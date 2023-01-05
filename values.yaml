@@ -12,6 +12,11 @@ serviceAccount:
   create: true
   annotations: {}
   name: ""
+  multiServiceAccounts: 
+    enabled: false
+    names:
+      - test1
+      - test2
 
 deployment:
   replicaCount: 1
