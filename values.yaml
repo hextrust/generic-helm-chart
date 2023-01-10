@@ -14,8 +14,9 @@ serviceAccount:
   name: ""
   multiServiceAccounts: 
     enabled: false
-    names:
-      - metric
+    #### Example ####
+    # names:
+    #   - metric
 
 deployment:
   replicaCount: 1
@@ -146,11 +147,12 @@ service:
       name: http
   multiServices:
     enabled: false
-    port: 
-      - port: 8082
-        targetPort: http-admin
-        protocol: TCP
-        name: admin
+    #### Example ####
+    # port: 
+    #   - port: 8082
+    #     targetPort: http-admin
+    #     protocol: TCP
+    #     name: admin
   
 
 ingress:
