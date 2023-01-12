@@ -18,38 +18,38 @@ serviceAccount:
     # names:
     #   - metric
 
-deployment:
-  replicaCount: 1
-  imagePullSecrets:
-    - name: regcred
-  image:
-    repository: ""
-    pullPolicy: IfNotPresent
-    tag: ""
-  livenessProbe: {}
-  readinessProbe: {}
-  startupProbe: {}
-  podAnnotations:
-    consul.hashicorp.com/consul-sidecar-cpu-limit: "125m"
-    consul.hashicorp.com/consul-sidecar-cpu-request: "25m"
-    consul.hashicorp.com/consul-sidecar-memory-limit: "150m"
-    consul.hashicorp.com/consul-sidecar-memory-request: "50Mi"
-  serviceDefault:
-    enabled: false
-  serviceIntention:
-    enabled: false
-  podSecurityContext: {}
-  securityContext: {}
-  resources: 
-    requests:
-      memory: 400Mi
-      cpu: 200m
-    limits:
-      memory: 400Mi
-      cpu: 200m
-  nodeSelector: {}
-  tolerations: []
-  affinity: {}
+deployment: {}
+  # replicaCount: 1
+  # imagePullSecrets:
+  #   - name: regcred
+  # image:
+  #   repository: ""
+  #   pullPolicy: IfNotPresent
+  #   tag: ""
+  # livenessProbe: {}
+  # readinessProbe: {}
+  # startupProbe: {}
+  # podAnnotations:
+  #   consul.hashicorp.com/consul-sidecar-cpu-limit: "125m"
+  #   consul.hashicorp.com/consul-sidecar-cpu-request: "25m"
+  #   consul.hashicorp.com/consul-sidecar-memory-limit: "150m"
+  #   consul.hashicorp.com/consul-sidecar-memory-request: "50Mi"
+  # serviceDefault:
+  #   enabled: false
+  # serviceIntention:
+  #   enabled: false
+  # podSecurityContext: {}
+  # securityContext: {}
+  # resources: 
+  #   requests:
+  #     memory: 400Mi
+  #     cpu: 200m
+  #   limits:
+  #     memory: 400Mi
+  #     cpu: 200m
+  # nodeSelector: {}
+  # tolerations: []
+  # affinity: {}
   # service:
   #   port:
   #     - name: http-metric
