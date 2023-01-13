@@ -19,6 +19,7 @@ serviceAccount:
     #   - metric
 
 deployment:
+  enabled: true
   replicaCount: 1
   imagePullSecrets:
     - name: regcred
@@ -59,7 +60,8 @@ deployment:
   # env:
   #   demo: demo
 
-StatefulSet: {}
+StatefulSet:
+  enabled: false
   # replicaCount: 1
   # imagePullSecrets:
   #   - name: regcred
