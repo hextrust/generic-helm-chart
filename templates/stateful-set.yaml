@@ -1,4 +1,4 @@
-{{- if .Values.StatefulSet }}
+{{- if .Values.StatefulSet.enabled }}
 {{- $values := . }}
 apiVersion: apps/v1
 kind: StatefulSet
@@ -11,12 +11,14 @@ metadata:
   labels:
     {{- include "app.labels" . | nindent 4 }}
 spec:
-  
   selector:
     matchLabels:
       {{- include "app.selectorLabels" . | nindent 6 }}
-  {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.StatefulSet.replicaCount }}
+  serviceName: {{ include "app.fullname" . }}
+  {{- with .Values.StatefulSet.strategy }}
+  updateStrategy: 
+  {{- toYaml . | nindent 4 }}
   {{- end }}
   template:
     metadata:
@@ -113,37 +115,8 @@ spec:
         {{- with .Values.StatefulSet.extraContainers }}
           {{- toYaml . | nindent 8 }}
         {{- end }}
-      {{- with .Values.StatefulSet.volumes }}
-      # volumes:
-      #   {{- toYaml . | nindent 8 }}
-      # {{- end }}
-      # {{- with .Values.StatefulSet.nodeSelector }}
   volumeClaimTemplates:
-    - metadata:
-        name: {{ .Values.StatefulSet.persistenceStorage.name }}
-        labels: *Labels
-        {{- with $.Values.StatefulSet.annotations }}
-        annotations: {{- toYaml . | nindent 10 }}
-      spec:
-        volumeMode: {{ .Values.StatefulSet.persistenceStorage.volumeMode }}
-        accessModes:
-          - {{ .Values.StatefulSet.persistenceStorage.accessMode | quote }}
-      {{- if hasKey .Values.StatefulSet.persistenceStorage "storageClass" }}
-        storageClassName: {{ .Values.StatefulSet.persistenceStorage.storageClass | quote }}
-      {{- end }}
-        resources:
-          requests:
-            storage: {{ .Values.StatefulSet.persistenceStorage.size | quote }}
-    {{- end }}
-      nodeSelector:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.StatefulSet.affinity }}
-      affinity:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.StatefulSet.tolerations }}
-      tolerations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
+  {{- with .Values.StatefulSet.persistenceStorage }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 {{- end }}
