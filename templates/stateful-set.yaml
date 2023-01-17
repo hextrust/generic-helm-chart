@@ -39,8 +39,7 @@ spec:
       securityContext:
         {{- toYaml .Values.StatefulSet.podSecurityContext | nindent 8 }}
       {{- with .Values.StatefulSet.initContainers }}
-      initContainers:
-          {{- toYaml . | nindent 8 }}
+        {{- toYaml . | nindent 8 }}
       {{- end }}
       containers:
         - name: {{ include "app.name" . }}
