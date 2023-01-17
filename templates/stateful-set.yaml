@@ -40,8 +40,21 @@ spec:
         {{- toYaml .Values.StatefulSet.podSecurityContext | nindent 8 }}
       {{- with .Values.StatefulSet.initContainers }}
       initContainers:
-          {{- toYaml . | nindent 8 }}
+        {{- range . }}
+        {{- if eq .type "template" }}
+          {{- include .template $values | nindent 8 }}
+        {{- else }}
+        - name: {{ .name }}
+          command: 
+            {{- toYaml .command | nindent 12 }}
+          image: {{ .image }}
+          {{- if .volumeMounts }}
+          volumeMounts:
+            {{- toYaml .volumeMounts | nindent 12 }}
+          {{- end }}
         {{- end }}
+        {{- end }}
+      {{- end }}
       containers:
         - name: {{ include "app.name" . }}
           securityContext:
