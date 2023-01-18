@@ -61,70 +61,69 @@ deployment:
   #   demo: demo
 
 StatefulSet:
-  enabled: false
-  # replicaCount: 1
-  # imagePullSecrets:
-  #   - name: regcred
-  # image:
-  #   repository: ""
-  #   pullPolicy: IfNotPresent
-  #   tag: ""
-  # livenessProbe: {}
-  # readinessProbe: {}
-  # startupProbe: {}
-  # podAnnotations: {}
-  # podSecurityContext: {}
-  # securityContext: {}
-  # resources: 
-  #   requests:
-  #     memory: 400Mi
-  #     cpu: 200m
-  #   limits:
-  #     memory: 400Mi
-  #     cpu: 200m
-  # nodeSelector: {}
-  # tolerations: []
-  # affinity: {}
-  # envFrom:
-  #   - type: configmap
-  #     suffix: config
-  #   - type: configmap
-  #     suffix: keycloak-config
-  #   - type: secret
-  #     suffix: secret
-  # volumeMounts:
-  #   - mountPath: "/db"
-  #     name: sqlite3
-  # persistenceStorage:
-  #   name : sqlite3
-  #   accessMode: ["ReadWriteOnce"]
-  #   storageClass: gp3-retain
-  #   volumeMode: Filesystem
-  #   size : 500M
-  # # volumes:
-  # #   - name: soft-kms
-  # #     persistentVolumeClaim:
-  # #       claimName: soft-kms
-  # extraContainers: []
-  #   #### Example ####
-  #   # - name: dummy-container
-  #   #   image: alpine:3.8
-  #   #   command: [sh, -c]
-  #   #   args:
-  #   #     - wget -qO- https://get.helm.sh/helm-v2.16.1-linux-amd64.tar.gz | tar -xvzf - &&
-  #   #       mv linux-amd64/helm /custom-tools/
-  #   #   volumeMounts:
-  #   #     - mountPath: /custom-tools
-  #   #       name: custom-tools
-  # initContainers:
-  #   #### Example ####
-  #   - name: init-myservice
-  #     image: busybox:1.28
-  #     command: ['sh', '-c', "until nslookup myservice.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for myservice; sleep 2; done"]
-  #   - name: init-mydb
-  #     image: busybox:1.28
-  #     command: ['sh', '-c', "until nslookup mydb.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for mydb; sleep 2; done"]
+  enabled: true
+  replicaCount: 1
+  imagePullSecrets:
+    - name: regcred
+  image:
+    repository: 0xpolygon/erigon
+    pullPolicy: IfNotPresent
+    tag: "latest"
+  command: ["/usr/local/bin/erigon"]
+  service:
+    port:
+      - name: http
+        containerPort: 8545
+        protocol: TCP
+  # extraContainers: 
+  #   - name: s3-sync
+  #     image: amazon/aws-cli:2.9.3
+  #     imagePullPolicy: IfNotPresent
+  #     command: [ "/bin/bash", "-c", "--" ]
+  #     args: [ 'while true; do aws s3 sync s3://eks-metazen-develop-eks-develop-alpha-polygon-erigon/ /app/playwright-report/ ; sleep 60; done;' ]
+  #     volumeMounts:
+  #     - mountPath: /opt/erigon_dir/data
+  #       name: polygon-erigon
+  initContainers:
+    #### Example ####
+    - name: init-myservice
+      image: busybox:1.28
+      command: ['sh', '-c', "until nslookup myservice.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for myservice; sleep 2; done"]
+    - name: init-mydb
+      image: busybox:1.28
+      command: ['sh', '-c', "until nslookup mydb.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for mydb; sleep 2; done"]
 
+  podAnnotations: {}
+  podSecurityContext: {}
+  securityContext: {}
+  # resources:
+  #   requests:
+  #     cpu: 2
+  #     memory: 256Mi
+  #   limits:
+  #     cpu: 2
+  #     memory: 256Mi
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  strategy:
+    type: RollingUpdate
+  envFrom:
+    - type: configmap
+      suffix: config
+  volumeMounts:
+    - mountPath: /opt/erigon_dir/data
+      name: polygon-erigon
+  persistenceStorage:
+  - metadata:
+      name: polygon-erigon
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: "gp3-retain"
+      resources:
+        requests:
+          storage: 1600Gi
+          
 configMap:
   config:
     suffix: config
