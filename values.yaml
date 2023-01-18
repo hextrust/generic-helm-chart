@@ -125,37 +125,6 @@ StatefulSet:
   #   #   image: busybox:1.28
   #   #   command: ['sh', '-c', "until nslookup mydb.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for mydb; sleep 2; done"]
 
-  podAnnotations: {}
-  podSecurityContext: {}
-  securityContext: {}
-  # resources:
-  #   requests:
-  #     cpu: 2
-  #     memory: 256Mi
-  #   limits:
-  #     cpu: 2
-  #     memory: 256Mi
-  nodeSelector: {}
-  tolerations: []
-  affinity: {}
-  strategy:
-    type: RollingUpdate
-  envFrom:
-    - type: configmap
-      suffix: config
-  volumeMounts:
-    - mountPath: /opt/erigon_dir/data
-      name: polygon-erigon
-  persistenceStorage:
-  - metadata:
-      name: polygon-erigon
-    spec:
-      accessModes: [ "ReadWriteOnce" ]
-      storageClassName: "gp3-retain"
-      resources:
-        requests:
-          storage: 1600Gi
-          
 configMap:
   config:
     suffix: config
