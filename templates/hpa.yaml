@@ -2,7 +2,7 @@
 apiVersion: autoscaling/v2beta2
 kind: HorizontalPodAutoscaler
 metadata:
-  annotation:
+  annotations:
     argocd.argoproj.io/sync-wave: "5"
   name: {{ include "app.fullname" . }}
   labels:
