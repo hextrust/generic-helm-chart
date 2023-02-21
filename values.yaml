@@ -213,7 +213,7 @@ autoscaling:
   #   kind: Rollout OR Deployment
 
 rustDBMigration:
-  enabled: true
+  enabled: false
 
 goDBMigration:
   enabled: false
