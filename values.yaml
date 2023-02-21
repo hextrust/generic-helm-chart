@@ -36,9 +36,15 @@ deployment:
     consul.hashicorp.com/consul-sidecar-memory-limit: "150m"
     consul.hashicorp.com/consul-sidecar-memory-request: "50Mi"
   serviceDefault:
-    enabled: false
+    enabled: false # Enable to allow nginx ingress connect with service in this helm chart while joining service mesh.
   serviceIntention:
     enabled: false
+  # serviceIntention:
+  #   enabled: true
+  #   source:
+  #     - sourceName: compliance-checker
+  #     - sourceName: api-gateway
+
   podSecurityContext: {}
   securityContext: {}
   resources: 
