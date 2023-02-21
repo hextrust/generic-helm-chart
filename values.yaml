@@ -42,9 +42,8 @@ deployment:
   # serviceIntention:
   #   enabled: true
   #   source:
-  #     - sourceName: compliance-checker
+  #     - sourceName: compliance-checker # Name of source services need to be connected to service in this helm chart while joining service mesh
   #     - sourceName: api-gateway
-
   podSecurityContext: {}
   securityContext: {}
   resources: 
