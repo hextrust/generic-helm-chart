@@ -22,13 +22,12 @@ spec:
   {{- end }}
   template:
     metadata:
-      {{- with .Values.StatefulSet.podAnnotations }}
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+      {{- with .Values.StatefulSet.podAnnotations }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        checksum/config: {{ .Values.configMap | toYaml | sha1sum }}
         {{- include "app.labels" . | nindent 8 }}
     spec:
       {{- with .Values.StatefulSet.imagePullSecrets }}
