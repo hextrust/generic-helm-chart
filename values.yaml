@@ -30,11 +30,7 @@ deployment:
   livenessProbe: {}
   readinessProbe: {}
   startupProbe: {}
-  podAnnotations:
-    consul.hashicorp.com/consul-sidecar-cpu-limit: "125m"
-    consul.hashicorp.com/consul-sidecar-cpu-request: "25m"
-    consul.hashicorp.com/consul-sidecar-memory-limit: "150m"
-    consul.hashicorp.com/consul-sidecar-memory-request: "50Mi"
+  podAnnotations: {}
   serviceDefault:
     enabled: false # Enable to allow nginx ingress connect with service in this helm chart while joining service mesh.
   serviceIntention:
