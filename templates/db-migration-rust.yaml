@@ -17,6 +17,10 @@ spec:
     metadata:
       labels:
         db-migration: "true"
+      annotations:
+      {{- with .Values.goDBMigration.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
     spec:
       {{- with $job.imagePullSecrets }}
       imagePullSecrets:

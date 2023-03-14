@@ -215,9 +215,11 @@ autoscaling:
 
 rustDBMigration:
   enabled: false
+  podAnnotations: {}
 
 goDBMigration:
   enabled: false
+  podAnnotations: {}
   #### Example ####
   # externalSecret:
   #   secretStore: secretstore-alpha
