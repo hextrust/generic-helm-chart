@@ -1,0 +1,26 @@
+{{- if .Values.cronjob.enabled }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "app.fullname" . }}
+spec:
+  schedule: "{{ .Values.cronjob.schedule }}"
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          annotations:
+          {{- with .Values.cronjob.podAnnotations }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+        spec:
+          containers:
+            - name: {{ include "app.fullname" . }}
+              image: "{{ .Values.cronjob.image.repository }}:{{ .Values.cronjob.image.tag | default .Chart.AppVersion }}"
+              imagePullPolicy: {{ .Values.cronjob.image.pullPolicy }}
+              command:
+              {{-  range .Values.cronjob.command }}
+              - {{ . }}
+              {{- end }}
+          restartPolicy: {{ .Values.cronjob.restartPolicy }}
+{{- end }}
