@@ -126,6 +126,21 @@ StatefulSet:
   #   #   image: busybox:1.28
   #   #   command: ['sh', '-c', "until nslookup mydb.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for mydb; sleep 2; done"]
 
+cronjob:
+  enabled: false
+  # podAnnotations:
+  #   annotaion1: test
+  # schedule: "* * * * *"
+  # image:
+  #   repository: "/repository/test/htm-nav"
+  #   pullPolicy: IfNotPresent
+  #   tag: "0.0.1"
+  # command:
+  #   - /bin/sh
+  #   - -c
+  #   - date; echo Hello from the Kubernetes cluster
+  # restartPolicy: "OnFailure" 
+
 configMap:
   config:
     suffix: config
