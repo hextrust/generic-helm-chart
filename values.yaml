@@ -126,27 +126,26 @@ StatefulSet:
   #   #   image: busybox:1.28
   #   #   command: ['sh', '-c', "until nslookup mydb.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for mydb; sleep 2; done"]
 
-cronjob:
+cronjob: 
   enabled: false
-  # podAnnotations:
-  #   annotaion1: test
-  # schedule: "* * * * *"
+  # schedule: "* 9 * * *"
   # imagePullSecrets:
-  #   - name: regcred
+  #   - name: regcred-operations
   # image:
-  #   repository: "/repository/test/htm-nav"
+  #   repository: "registry.gitlab.int.hextech.io/operations/htm-nav"
   #   pullPolicy: IfNotPresent
-  #   tag: "0.0.1"
-  # command:
-  #   - /bin/sh
-  #   - -c
-  #   - date; echo Hello from the Kubernetes cluster
+  #   tag: "ff66184d"
   # restartPolicy: "OnFailure"
   # envFrom:
-  #   - type: configmap
-  #     suffix: config 
   #   - type: secret
   #     suffix: secret
+  # resources: 
+  #   requests:
+  #     memory: 400Mi
+  #     cpu: 200m
+  #   limits:
+  #     memory: 400Mi
+  #     cpu: 200m
 
 configMap:
   config:
