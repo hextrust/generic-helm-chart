@@ -14,6 +14,10 @@ spec:
             {{- toYaml . | nindent 12 }}
           {{- end }}
         spec:
+          {{- with .Values.cronjob.imagePullSecrets }}
+          imagePullSecrets:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           containers:
             - name: {{ include "app.fullname" . }}
               image: "{{ .Values.cronjob.image.repository }}:{{ .Values.cronjob.image.tag | default .Chart.AppVersion }}"

@@ -131,6 +131,8 @@ cronjob:
   # podAnnotations:
   #   annotaion1: test
   # schedule: "* * * * *"
+  # imagePullSecrets:
+  #   - name: regcred
   # image:
   #   repository: "/repository/test/htm-nav"
   #   pullPolicy: IfNotPresent
