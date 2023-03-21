@@ -19,8 +19,36 @@ spec:
               image: "{{ .Values.cronjob.image.repository }}:{{ .Values.cronjob.image.tag | default .Chart.AppVersion }}"
               imagePullPolicy: {{ .Values.cronjob.image.pullPolicy }}
               command:
-              {{-  range .Values.cronjob.command }}
-              - {{ . }}
+                {{-  range .Values.cronjob.command }}
+                - {{ . }}
+                {{- end }}
+              env: 
+              - name: POD_NAME
+                valueFrom:
+                  fieldRef:
+                    fieldPath: metadata.name
+              - name: POD_NAMESPACE
+                valueFrom:
+                  fieldRef:
+                    fieldPath: metadata.namespace
+              {{- if .Values.cronjob.env }}
+              {{- range $k, $v := .Values.cronjob.env }}
+              - name: {{ $k }}
+                value: {{ $v }}
+              {{- end }}
+              {{- end }}
+              {{- if .Values.cronjob.envFrom }}
+              envFrom:
+                {{- $fullname := include "app.fullname" . }}
+                {{- range $v := .Values.cronjob.envFrom }}
+                {{- if eq $v.type "configmap" }}
+                - configMapRef:
+                    name: {{ $fullname }}-{{ $v.suffix }}
+                {{- else if eq $v.type "secret" }}
+                - secretRef:
+                    name: {{ $fullname }}-{{ $v.suffix }}
+                {{- end }}
+                {{- end }}
               {{- end }}
           restartPolicy: {{ .Values.cronjob.restartPolicy }}
 {{- end }}
