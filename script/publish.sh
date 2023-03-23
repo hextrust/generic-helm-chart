@@ -17,7 +17,7 @@ PACKAGE_REGISTRY_PASSWORD="${PACKAGE_REGISTRY_PASSWORD}"
 [[ ! -z "${PACKAGE_REGISTRY_PASSWORD}" ]] || usage
 
 echo "Packaging helm chart..."
-VERSION=$(cut -d ":" -f2 <<< $(helm show chart .|grep version)) | sed 's/ //g'
+VERSION=$(cut -d ":" -f2 <<< $(helm show chart .|grep version)|tr -d ' ')
 helm package .
 PACKAGE=$(ls | grep -i "^generic-helm-chart-$VERSION.*tgz$")
 [[ ! -z "${PACKAGE}" ]] || usage "Helm package not found, exit 1"
