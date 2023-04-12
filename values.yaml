@@ -159,6 +159,7 @@ configMap:
 #       test4: test4
 
 service:
+  enabled: true
   type: ClusterIP
   port: 
     - port: 8080
