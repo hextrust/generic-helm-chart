@@ -30,7 +30,7 @@ spec:
       restartPolicy: Never
       containers:
         - name: migrate
-          image: migrate/migrate:v4.15.1
+          image: registry.tech.hextech.io/migrate/migrate:v4.15.1
           imagePullPolicy: IfNotPresent
           command:
             - /bin/sh
