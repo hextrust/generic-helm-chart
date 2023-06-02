@@ -1,20 +1,21 @@
-{{- if .Values.deployment.enabled }}
+{{- if .Values.deployments > 0 }}
+{{ for value in .Values.deployments }}
 {{- $values := . }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "app.fullname" . }}
-  {{- if .Values.goDBMigration.enabled }}
+  {{- if value.goDBMigration.enabled }}
   annotations:
     argocd.argoproj.io/sync-wave: "4"
   {{- end }}
   labels:
     {{- include "app.labels" . | nindent 4 }}
 spec:
-  {{- if not .Values.autoscaling.enabled }}
-  replicas: {{ .Values.deployment.replicaCount }}
+  {{- if not value.autoscaling.enabled }}
+  replicas: {{ value.deployment.replicaCount }}
   {{- end }}
-  {{- with .Values.deployment.strategy }}
+  {{- with value.deployment.strategy }}
   strategy: 
   {{- toYaml . | nindent 4 }}
   {{- end }}
@@ -25,21 +26,21 @@ spec:
     metadata:
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
-      {{- with .Values.deployment.podAnnotations }}
+      {{- with value.deployment.podAnnotations }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        checksum/config: {{ .Values.configMap | toYaml | sha1sum }}
+        checksum/config: {{ value.configMap | toYaml | sha1sum }}
         {{- include "app.labels" . | nindent 8 }}
     spec:
-      {{- with .Values.deployment.imagePullSecrets }}
+      {{- with value.deployment.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       serviceAccountName: {{ include "app.serviceAccountName" . }}
       securityContext:
-        {{- toYaml .Values.deployment.podSecurityContext | nindent 8 }}
-      {{- with .Values.deployment.initContainers }}
+        {{- toYaml value.deployment.podSecurityContext | nindent 8 }}
+      {{- with value.deployment.initContainers }}
       initContainers:
         {{- range . }}
         {{- if eq .type "template" }}
@@ -59,20 +60,20 @@ spec:
       containers:
         - name: {{ include "app.name" . }}
           securityContext:
-            {{- toYaml .Values.deployment.securityContext | nindent 12 }}
-          image: "{{ .Values.deployment.image.repository }}:{{ .Values.deployment.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.deployment.image.pullPolicy }}
-          {{- with .Values.deployment.command }}
+            {{- toYaml value.deployment.securityContext | nindent 12 }}
+          image: "{{ value.deployment.image.repository }}:{{ value.deployment.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ value.deployment.image.pullPolicy }}
+          {{- with value.deployment.command }}
           command:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- with .Values.deployment.args }}
+          {{- with value.deployment.args }}
           args:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- if .Values.deployment.service }}
+          {{- if value.deployment.service }}
           ports:
-            {{- range .Values.deployment.service.port }}
+            {{- range value.deployment.service.port }}
             - name: {{ .name }}
               containerPort: {{ .containerPort }}
               protocol: {{ .protocol }}
@@ -87,16 +88,16 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: metadata.namespace
-          {{- if .Values.deployment.env }}
-          {{- range $k, $v := .Values.deployment.env }}
+          {{- if value.deployment.env }}
+          {{- range $k, $v := value.deployment.env }}
           - name: {{ $k }}
             value: {{ $v }}
           {{- end }}
           {{- end }}
-          {{- if .Values.deployment.envFrom }}
+          {{- if value.deployment.envFrom }}
           envFrom:
             {{- $fullname := include "app.fullname" . }}
-            {{- range $v := .Values.deployment.envFrom }}
+            {{- range $v := value.deployment.envFrom }}
             {{- if eq $v.type "configmap" }}
             - configMapRef:
                 name: {{ $fullname }}-{{ $v.suffix }}
@@ -106,37 +107,38 @@ spec:
             {{- end }}
             {{- end }}
           {{- end }}
-          {{- with .Values.deployment.livenessProbe }}
+          {{- with value.deployment.livenessProbe }}
           livenessProbe: 
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- with .Values.deployment.readinessProbe }}
+          {{- with value.deployment.readinessProbe }}
           readinessProbe: 
             {{- toYaml . | nindent 12 }}
           {{- end }}
           resources:
-            {{- toYaml .Values.deployment.resources | nindent 12 }}
-          {{- with .Values.deployment.volumeMounts }}
+            {{- toYaml value.deployment.resources | nindent 12 }}
+          {{- with value.deployment.volumeMounts }}
           volumeMounts:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-        {{- with .Values.deployment.extraContainers }}
+        {{- with value.deployment.extraContainers }}
           {{- toYaml . | nindent 8 }}
         {{- end }}
-      {{- with .Values.deployment.volumes }}
+      {{- with value.deployment.volumes }}
       volumes:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.deployment.nodeSelector }}
+      {{- with value.deployment.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.deployment.affinity }}
+      {{- with value.deployment.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.deployment.tolerations }}
+      {{- with value.deployment.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+{{- end }}
 {{- end }}

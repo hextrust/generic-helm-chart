@@ -18,48 +18,91 @@ serviceAccount:
     # names:
     #   - metric
 
-deployment:
-  enabled: true
-  replicaCount: 1
-  imagePullSecrets:
-    - name: regcred
-  image:
-    repository: ""
-    pullPolicy: IfNotPresent
-    tag: ""
-  livenessProbe: {}
-  readinessProbe: {}
-  startupProbe: {}
-  podAnnotations: {}
-  serviceDefault:
-    enabled: false # Enable to allow nginx ingress connect with service in this helm chart while joining service mesh.
-  serviceIntention:
-    enabled: false
-  # serviceIntention:
+deployments:
+  - name: default
+    enabled: true
+    replicaCount: 1
+    imagePullSecrets:
+      - name: regcred
+    image:
+      repository: ""
+      pullPolicy: IfNotPresent
+      tag: ""
+    livenessProbe: {}
+    readinessProbe: {}
+    startupProbe: {}
+    podAnnotations: {}
+    serviceDefault:
+      enabled: false # Enable to allow nginx ingress connect with service in this helm chart while joining service mesh.
+    serviceIntention:
+      enabled: false
+    # serviceIntention:
+    #   enabled: true
+    #   source:
+    #     - sourceName: compliance-checker # Name of source services need to be connected to service in this helm chart while joining service mesh
+    #     - sourceName: api-gateway
+    podSecurityContext: {}
+    securityContext: {}
+    resources: 
+      requests:
+        memory: 400Mi
+        cpu: 200m
+      limits:
+        memory: 400Mi
+        cpu: 200m
+    nodeSelector: {}
+    tolerations: []
+    affinity: {}
+    # service:
+    #   port:
+    #     - name: http-metric
+    #       containerPort: 8081
+    #       protocol: TCP
+    ## Environment Variables attach to the pod directly
+    # env:
+    #   demo: demo
+  # - name: depatcher
   #   enabled: true
-  #   source:
-  #     - sourceName: compliance-checker # Name of source services need to be connected to service in this helm chart while joining service mesh
-  #     - sourceName: api-gateway
-  podSecurityContext: {}
-  securityContext: {}
-  resources: 
-    requests:
-      memory: 400Mi
-      cpu: 200m
-    limits:
-      memory: 400Mi
-      cpu: 200m
-  nodeSelector: {}
-  tolerations: []
-  affinity: {}
-  # service:
-  #   port:
-  #     - name: http-metric
-  #       containerPort: 8081
-  #       protocol: TCP
-  ## Environment Variables attach to the pod directly
-  # env:
-  #   demo: demo
+  #   replicaCount: 1
+  #   imagePullSecrets:
+  #     - name: regcred
+  #   image:
+  #     repository: ""
+  #     pullPolicy: IfNotPresent
+  #     tag: ""
+  #   livenessProbe: {}
+  #   readinessProbe: {}
+  #   startupProbe: {}
+  #   podAnnotations: {}
+  #   serviceDefault:
+  #     enabled: false # Enable to allow nginx ingress connect with service in this helm chart while joining service mesh.
+  #   serviceIntention:
+  #     enabled: false
+  #   # serviceIntention:
+  #   #   enabled: true
+  #   #   source:
+  #   #     - sourceName: compliance-checker # Name of source services need to be connected to service in this helm chart while joining service mesh
+  #   #     - sourceName: api-gateway
+  #   podSecurityContext: {}
+  #   securityContext: {}
+  #   resources: 
+  #     requests:
+  #       memory: 400Mi
+  #       cpu: 200m
+  #     limits:
+  #       memory: 400Mi
+  #       cpu: 200m
+  #   nodeSelector: {}
+  #   tolerations: []
+  #   affinity: {}
+  #   # service:
+  #   #   port:
+  #   #     - name: http-metric
+  #   #       containerPort: 8081
+  #   #       protocol: TCP
+  #   ## Environment Variables attach to the pod directly
+  #   # env:
+  #   #   demo: demo
 
 StatefulSet:
   enabled: false
