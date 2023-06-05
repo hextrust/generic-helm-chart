@@ -1,15 +1,21 @@
-{{- if .Values.multiDeployment.enabled }}
+{{- if not (eq (len (.Values.deployments)) 0) }}
 {{- $values := . }}
-{{- range $deployment := .Values.multiDeployment.deployment }}
+{{- $fullname := include "app.fullname" . }}
+{{- $labels := include "app.labels" . }}
+{{- $selectorLabels := include "app.selectorLabels" . }}
+{{- $serviceAccountName := include "app.serviceAccountName" . }}
+{{- $appname := include "app.name" . }}
+{{- range $deployment := .Values.deployments }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: test
+  name: {{ $fullname }}
   {{- if $values.Values.goDBMigration.enabled }}
   annotations:
     argocd.argoproj.io/sync-wave: "4"
   {{- end }}
   labels:
+    {{- $labels | nindent 4 }}
 spec:
   {{- if not $deployment.autoscaling.enabled }}
   replicas: {{ $deployment.replicaCount }}
@@ -20,6 +26,7 @@ spec:
   {{- end }}
   selector:
     matchLabels:
+      {{- $selectorLabels | nindent 6 }}
   template:
     metadata:
       annotations:
@@ -29,12 +36,13 @@ spec:
       {{- end }}
       labels:
         checksum/config: {{ .Values.configMap | toYaml | sha1sum }}
+        {{- $labels | nindent 8 }}
     spec:
       {{- with .Values.deployment.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: 
+      serviceAccountName: {{ $serviceAccountName }}
       securityContext:
         {{- toYaml $deployment.podSecurityContext | nindent 8 }}
       {{- with $deployment.initContainers }}
@@ -55,9 +63,9 @@ spec:
         {{- end }}
       {{- end }}
       containers:
-        - name: test
+        - name: {{ $appname }}
           securityContext:
-            {{- toYaml .securityContext | nindent 12 }}
+            {{- toYaml $deployment.securityContext | nindent 12 }}
           image: "{{ $deployment.image.repository }}:{{ $deployment.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ $deployment.image.pullPolicy }}
           {{- with $deployment.command }}
@@ -91,16 +99,16 @@ spec:
             value: {{ $v }}
           {{- end }}
           {{- end }}
-          {{- if .envFrom }}
+          {{- if $deployment.envFrom }}
           envFrom:
-            test
+            {{$fullname }}
             {{- range $v := $deployment.envFrom }}
             {{- if eq $v.type "configmap" }}
             - configMapRef:
-                name: test-{{ $v.suffix }}
+                name: {{ $fullname }}-{{ $v.suffix }}
             {{- else if eq $v.type "secret" }}
             - secretRef:
-                name: test-{{ $v.suffix }}
+                name: {{ $fullname }}-{{ $v.suffix }}
             {{- end }}
             {{- end }}
           {{- end }}
