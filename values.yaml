@@ -65,7 +65,7 @@ deployment:
 multiDeployment:
   enabled: true
   deployment:
-    - name:
+    - name: dispatcher
       enabled: true
       replicaCount: 1
       imagePullSecrets:
@@ -82,11 +82,6 @@ multiDeployment:
         enabled: false # Enable to allow nginx ingress connect with service in this helm chart while joining service mesh.
       serviceIntention:
         enabled: false
-      # serviceIntention:
-      #   enabled: true
-      #   source:
-      #     - sourceName: compliance-checker # Name of source services need to be connected to service in this helm chart while joining service mesh
-      #     - sourceName: api-gateway
       podSecurityContext: {}
       securityContext: {}
       resources: 
@@ -99,6 +94,8 @@ multiDeployment:
       nodeSelector: {}
       tolerations: []
       affinity: {}
+      autoscaling:
+        enabled: false 
 
 StatefulSet:
   enabled: false

@@ -1,15 +1,16 @@
-{{- if not (eq (len (.Values.deployments)) 0) }}
+{{- if .Values.multiDeployment.enabled }}
 {{- $values := . }}
 {{- $fullname := include "app.fullname" . }}
 {{- $labels := include "app.labels" . }}
 {{- $selectorLabels := include "app.selectorLabels" . }}
 {{- $serviceAccountName := include "app.serviceAccountName" . }}
-{{- $appname := include "app.name" . }}
-{{- range $deployment := .Values.deployments }}
+{{- $name := include "app.name" . }}
+{{- $configmap := include (print $.Template.BasePath "/configmap.yaml") . }}
+{{- range $deployment := .Values.multiDeployment.deployment }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ $fullname }}
+  name: {{ $fullname }}-{{ $deployment.name }}
   {{- if $values.Values.goDBMigration.enabled }}
   annotations:
     argocd.argoproj.io/sync-wave: "4"
@@ -30,15 +31,15 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        checksum/config: {{ $configmap | sha256sum }}
       {{- with $deployment.podAnnotations }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        checksum/config: {{ .Values.configMap | toYaml | sha1sum }}
+        checksum/config: {{ $values.Values.configMap | toYaml | sha1sum }}
         {{- $labels | nindent 8 }}
     spec:
-      {{- with .Values.deployment.imagePullSecrets }}
+      {{- with $deployment.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
@@ -63,10 +64,10 @@ spec:
         {{- end }}
       {{- end }}
       containers:
-        - name: {{ $appname }}
+        - name: {{ $name }}
           securityContext:
-            {{- toYaml $deployment.securityContext | nindent 12 }}
-          image: "{{ $deployment.image.repository }}:{{ $deployment.image.tag | default .Chart.AppVersion }}"
+            {{- toYaml .securityContext | nindent 12 }}
+          image: "{{ $deployment.image.repository }}:{{ $deployment.image.tag | default $values.Chart.AppVersion }}"
           imagePullPolicy: {{ $deployment.image.pullPolicy }}
           {{- with $deployment.command }}
           command:
@@ -99,10 +100,9 @@ spec:
             value: {{ $v }}
           {{- end }}
           {{- end }}
-          {{- if $deployment.envFrom }}
+          {{- if .envFrom }}
           envFrom:
-            {{$fullname }}
-            {{- range $v := $deployment.envFrom }}
+            {{- range $v := .Values.deployment.envFrom }}
             {{- if eq $v.type "configmap" }}
             - configMapRef:
                 name: {{ $fullname }}-{{ $v.suffix }}
