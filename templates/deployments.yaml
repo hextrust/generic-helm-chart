@@ -1,4 +1,5 @@
-{{- if .Values.deployment.enabled }}
+{{- if not (eq (len (.Values.deployments)) 0) }}
+{{- range $val := .Values.deployments }}
 {{- $values := . }}
 apiVersion: apps/v1
 kind: Deployment
@@ -11,10 +12,10 @@ metadata:
   labels:
     {{- include "app.labels" . | nindent 4 }}
 spec:
-  {{- if not .Values.autoscaling.enabled }}
-  replicas: {{ .Values.deployment.replicaCount }}
+  {{- if not $val.autoscaling.enabled }}
+  replicas: {{ $val.replicaCount }}
   {{- end }}
-  {{- with .Values.deployment.strategy }}
+  {{- with $val.strategy }}
   strategy: 
   {{- toYaml . | nindent 4 }}
   {{- end }}
@@ -25,7 +26,7 @@ spec:
     metadata:
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
-      {{- with .Values.deployment.podAnnotations }}
+      {{- with $val.podAnnotations }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
@@ -38,8 +39,8 @@ spec:
       {{- end }}
       serviceAccountName: {{ include "app.serviceAccountName" . }}
       securityContext:
-        {{- toYaml .Values.deployment.podSecurityContext | nindent 8 }}
-      {{- with .Values.deployment.initContainers }}
+        {{- toYaml $val.podSecurityContext | nindent 8 }}
+      {{- with $val.initContainers }}
       initContainers:
         {{- range . }}
         {{- if eq .type "template" }}
@@ -59,20 +60,20 @@ spec:
       containers:
         - name: {{ include "app.name" . }}
           securityContext:
-            {{- toYaml .Values.deployment.securityContext | nindent 12 }}
-          image: "{{ .Values.deployment.image.repository }}:{{ .Values.deployment.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.deployment.image.pullPolicy }}
-          {{- with .Values.deployment.command }}
+            {{- toYaml $val.securityContext | nindent 12 }}
+          image: "{{ $val.image.repository }}:{{ $val.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ $val.image.pullPolicy }}
+          {{- with $val.command }}
           command:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- with .Values.deployment.args }}
+          {{- with $val.args }}
           args:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- if .Values.deployment.service }}
+          {{- if $val.service }}
           ports:
-            {{- range .Values.deployment.service.port }}
+            {{- range $val.service.port }}
             - name: {{ .name }}
               containerPort: {{ .containerPort }}
               protocol: {{ .protocol }}
@@ -87,16 +88,16 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: metadata.namespace
-          {{- if .Values.deployment.env }}
-          {{- range $k, $v := .Values.deployment.env }}
+          {{- if $val.env }}
+          {{- range $k, $v := $val.env }}
           - name: {{ $k }}
             value: {{ $v }}
           {{- end }}
           {{- end }}
-          {{- if .Values.deployment.envFrom }}
+          {{- if $val.envFrom }}
           envFrom:
             {{- $fullname := include "app.fullname" . }}
-            {{- range $v := .Values.deployment.envFrom }}
+            {{- range $v := $val.envFrom }}
             {{- if eq $v.type "configmap" }}
             - configMapRef:
                 name: {{ $fullname }}-{{ $v.suffix }}
@@ -106,37 +107,38 @@ spec:
             {{- end }}
             {{- end }}
           {{- end }}
-          {{- with .Values.deployment.livenessProbe }}
+          {{- with $val.livenessProbe }}
           livenessProbe: 
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- with .Values.deployment.readinessProbe }}
+          {{- with $val.readinessProbe }}
           readinessProbe: 
             {{- toYaml . | nindent 12 }}
           {{- end }}
           resources:
-            {{- toYaml .Values.deployment.resources | nindent 12 }}
-          {{- with .Values.deployment.volumeMounts }}
+            {{- toYaml $val.resources | nindent 12 }}
+          {{- with $val.volumeMounts }}
           volumeMounts:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-        {{- with .Values.deployment.extraContainers }}
+        {{- with $val.extraContainers }}
           {{- toYaml . | nindent 8 }}
         {{- end }}
-      {{- with .Values.deployment.volumes }}
+      {{- with $val.volumes }}
       volumes:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.deployment.nodeSelector }}
+      {{- with $val.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.deployment.affinity }}
+      {{- with $val.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.deployment.tolerations }}
+      {{- with $val.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+{{- end }}
 {{- end }}
