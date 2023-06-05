@@ -7,6 +7,7 @@
 {{- $name := include "app.name" . }}
 {{- $configmap := include (print $.Template.BasePath "/configmap.yaml") . }}
 {{- range $deployment := .Values.multiDeployment.deployment }}
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -102,7 +103,7 @@ spec:
           {{- end }}
           {{- if .envFrom }}
           envFrom:
-            {{- range $v := .Values.deployment.envFrom }}
+            {{- range $v := $deployment.envFrom }}
             {{- if eq $v.type "configmap" }}
             - configMapRef:
                 name: {{ $fullname }}-{{ $v.suffix }}

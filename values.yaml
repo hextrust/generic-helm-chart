@@ -65,7 +65,7 @@ deployment:
 multiDeployment:
   enabled: true
   deployment:
-    - name: dispatcher
+    - name: 
       enabled: true
       replicaCount: 1
       imagePullSecrets:
