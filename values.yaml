@@ -18,6 +18,7 @@ serviceAccount:
     # names:
     #   - metric
 
+
 deployment:
   enabled: true
   replicaCount: 1
@@ -60,6 +61,38 @@ deployment:
   ## Environment Variables attach to the pod directly
   # env:
   #   demo: demo
+
+additionalDeployments: {}
+  # - name:
+  #   replicaCount: 1
+  #   imagePullSecrets:
+  #     - name: regcred
+  #   image:
+  #     repository: ""
+  #     pullPolicy: IfNotPresent
+  #     tag: ""
+  #   livenessProbe: {}
+  #   readinessProbe: {}
+  #   startupProbe: {}
+  #   podAnnotations: {}
+  #   serviceDefault:
+  #     enabled: false # Enable to allow nginx ingress connect with service in this helm chart while joining service mesh.
+  #   serviceIntention:
+  #     enabled: false
+  #   podSecurityContext: {}
+  #   securityContext: {}
+  #   resources: 
+  #     requests:
+  #       memory: 400Mi
+  #       cpu: 200m
+  #     limits:
+  #       memory: 400Mi
+  #       cpu: 200m
+  #   nodeSelector: {}
+  #   tolerations: []
+  #   affinity: {}
+  #   autoscaling:
+  #     enabled: false 
 
 StatefulSet:
   enabled: false
