@@ -1,23 +1,16 @@
 {{- if .Values.additionalDeployments }}
-{{- $values := . }}
-{{- $fullname := include "app.fullname" . }}
-{{- $labels := include "app.labels" . }}
-{{- $selectorLabels := include "app.selectorLabels" . }}
-{{- $serviceAccountName := include "app.serviceAccountName" . }}
-{{- $name := include "app.name" . }}
-{{- $configmap := include (print $.Template.BasePath "/configmap.yaml") . }}
 {{- range $deployment := .Values.additionalDeployments }}
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ $fullname }}-{{ $deployment.name }}
-  {{- if $values.Values.goDBMigration.enabled }}
+  name: {{ include "app.fullname" $ }}-{{ $deployment.name }}
+  {{- if $.Values.goDBMigration.enabled }}
   annotations:
     argocd.argoproj.io/sync-wave: "4"
   {{- end }}
   labels:
-    {{- $labels | nindent 4 }}
+    {{- include "app.labels" $ | nindent 4 }}
 spec:
   {{- if not $deployment.autoscaling.enabled }}
   replicas: {{ $deployment.replicaCount }}
@@ -28,30 +21,30 @@ spec:
   {{- end }}
   selector:
     matchLabels:
-      {{- $selectorLabels | nindent 6 }}
+      {{- include "app.selectorLabels" $ | nindent 6 }}
   template:
     metadata:
       annotations:
-        checksum/config: {{ $configmap | sha256sum }}
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") $ | sha256sum }}
       {{- with $deployment.podAnnotations }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        checksum/config: {{ $values.Values.configMap | toYaml | sha1sum }}
-        {{- $labels | nindent 8 }}
+        checksum/config: {{ $.Values.configMap | toYaml | sha1sum }}
+        {{- include "app.labels" $ | nindent 8 }}
     spec:
       {{- with $deployment.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ $serviceAccountName }}
+      serviceAccountName: {{ include "app.serviceAccountName" $ }}
       securityContext:
         {{- toYaml $deployment.podSecurityContext | nindent 8 }}
       {{- with $deployment.initContainers }}
       initContainers:
         {{- range . }}
         {{- if eq .type "template" }}
-          {{- include .template $values | nindent 8 }}
+          {{- include .template $ | nindent 8 }}
         {{- else }}
         - name: {{ .name }}
           command: 
@@ -65,10 +58,10 @@ spec:
         {{- end }}
       {{- end }}
       containers:
-        - name: {{ $name }}
+        - name: {{ include "app.name" $ }}
           securityContext:
             {{- toYaml .securityContext | nindent 12 }}
-          image: "{{ $deployment.image.repository }}:{{ $deployment.image.tag | default $values.Chart.AppVersion }}"
+          image: "{{ $deployment.image.repository }}:{{ $deployment.image.tag | default $.Chart.AppVersion }}"
           imagePullPolicy: {{ $deployment.image.pullPolicy }}
           {{- with $deployment.command }}
           command:
@@ -103,6 +96,7 @@ spec:
           {{- end }}
           {{- if .envFrom }}
           envFrom:
+            {{- $fullname := include "app.fullname" $ }}
             {{- range $v := $deployment.envFrom }}
             {{- if eq $v.type "configmap" }}
             - configMapRef:
