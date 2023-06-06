@@ -147,6 +147,8 @@ cronjob:
   #     memory: 400Mi
   #     cpu: 200m
 
+additionalCronjobs: []
+
 configMap:
   config:
     suffix: config

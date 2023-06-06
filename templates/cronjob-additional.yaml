@@ -1,0 +1,68 @@
+{{- if .Values.additionalCronjobs }}
+{{- range $cronjob := .Values.additionalCronjobs }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ $cronjob.name }}
+spec:
+  schedule: "{{ $cronjob.schedule }}"
+  jobTemplate:
+    spec:
+      template:
+        {{- if $cronjob.podAnnotations }}
+        metadata:
+          annotations:
+          {{- with $cronjob.podAnnotations }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+        {{- end }}
+        spec:
+          {{- with $cronjob.imagePullSecrets }}
+          imagePullSecrets:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          containers:
+            - name: {{ include "app.fullname" $ }}
+              image: "{{ $cronjob.image.repository }}:{{ $cronjob.image.tag | default $.Chart.AppVersion }}"
+              imagePullPolicy: {{ $cronjob.image.pullPolicy }}
+              {{- if $cronjob.command }}
+              command:
+                {{-  range $cronjob.command }}
+                - {{ . }}
+                {{- end }}
+              {{- end }}
+              env: 
+              - name: POD_NAME
+                valueFrom:
+                  fieldRef:
+                    fieldPath: metadata.name
+              - name: POD_NAMESPACE
+                valueFrom:
+                  fieldRef:
+                    fieldPath: metadata.namespace
+              {{- if $cronjob.env }}
+              {{- range $k, $v := $cronjob.env }}
+              - name: {{ $k }}
+                value: {{ $v }}
+              {{- end }}
+              {{- end }}
+              {{- if $cronjob.envFrom }}
+              envFrom:
+                {{- $fullname := include "app.fullname" $ }}
+                {{- range $v := $cronjob.envFrom }}
+                {{- if eq $v.type "configmap" }}
+                - configMapRef:
+                    name: {{ $fullname }}-{{ $v.suffix }}
+                {{- else if eq $v.type "secret" }}
+                - secretRef:
+                    name: {{ $fullname }}-{{ $v.suffix }}
+                {{- end }}
+                {{- end }}
+              {{- end }}
+              {{- with $cronjob.resources }}
+              resources:
+                {{- toYaml . | nindent 16 }}
+              {{- end }}
+          restartPolicy: {{ $cronjob.restartPolicy }}
+{{- end }}
+{{- end }}
