@@ -1,5 +1,6 @@
-{{- if .Values.additionalCronjobs }}
-{{- range $cronjob := .Values.additionalCronjobs }}
+{{- if .Values.additionalCronjobs.enabled }}
+{{- range $cronjob := .Values.additionalCronjobs.cronjobs }}
+{{- $default := $.Values.additionalCronjobs.default }}
 apiVersion: batch/v1
 kind: CronJob
 metadata:
@@ -15,19 +16,37 @@ spec:
           {{- with $cronjob.podAnnotations }}
             {{- toYaml . | nindent 12 }}
           {{- end }}
+        {{- else if $default.podAnnotations }}
+        metadata:
+          annotations:
+          {{- with $default.podAnnotations }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
         {{- end }}
         spec:
+          {{- if $cronjob.imagePullSecrets }}
           {{- with $cronjob.imagePullSecrets }}
           imagePullSecrets:
             {{- toYaml . | nindent 12 }}
           {{- end }}
+          {{- else if $default.imagePullSecrets }}
+          {{- with $default.imagePullSecrets }}
+          imagePullSecrets:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- end }}
           containers:
             - name: {{ include "app.fullname" $ }}
-              image: "{{ $cronjob.image.repository }}:{{ $cronjob.image.tag | default $.Chart.AppVersion }}"
-              imagePullPolicy: {{ $cronjob.image.pullPolicy }}
-              {{- if $cronjob.command }}
+              image: {{ if ($cronjob.image).repository }}{{ $cronjob.image.repository }}{{ else }}{{ $default.image.repository }}{{ end }}:{{ if ($cronjob.image).tag }}{{ $cronjob.image.tag }}{{ else }}{{ $default.image.tag }}{{ end }}
+              imagePullPolicy: {{ if ($cronjob.image).pullPolicy }}{{ $cronjob.image.pullPolicy }}{{ else }}{{ $default.image.pullPolicy }}{{ end }}
+              {{- if $cronjob.command  }}
               command:
                 {{-  range $cronjob.command }}
+                - {{ . }}
+                {{- end }}
+              {{- else if $default.command }}
+              command:
+                {{-  range $default.command }}
                 - {{ . }}
                 {{- end }}
               {{- end }}
@@ -45,6 +64,11 @@ spec:
               - name: {{ $k }}
                 value: {{ $v }}
               {{- end }}
+              {{- else if $default.env }}
+              {{- range $k, $v := $default.env }}
+              - name: {{ $k }}
+                value: {{ $v }}
+              {{- end }}
               {{- end }}
               {{- if $cronjob.envFrom }}
               envFrom:
@@ -58,11 +82,30 @@ spec:
                     name: {{ $fullname }}-{{ $v.suffix }}
                 {{- end }}
                 {{- end }}
+              {{- else if $default.envFrom }}
+              envFrom:
+                {{- $fullname := include "app.fullname" $ }}
+                {{- range $v := $default.envFrom }}
+                {{- if eq $v.type "configmap" }}
+                - configMapRef:
+                    name: {{ $fullname }}-{{ $v.suffix }}
+                {{- else if eq $v.type "secret" }}
+                - secretRef:
+                    name: {{ $fullname }}-{{ $v.suffix }}
+                {{- end }}
+                {{- end }}
               {{- end }}
+              {{- if $cronjob.resources }}
               {{- with $cronjob.resources }}
               resources:
                 {{- toYaml . | nindent 16 }}
               {{- end }}
-          restartPolicy: {{ $cronjob.restartPolicy }}
+              {{- else if $default.resources }}
+              {{- with $default.resources }}
+              resources:
+                {{- toYaml . | nindent 16 }}
+              {{- end }}
+              {{- end }}
+          restartPolicy: {{ if $cronjob.restartPolicy }}{{ $cronjob.restartPolicy }}{{ else }}{{ $default.restartPolicy }}{{ end }}
 {{- end }}
 {{- end }}
