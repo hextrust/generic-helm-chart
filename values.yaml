@@ -147,6 +147,21 @@ cronjob:
   #     memory: 400Mi
   #     cpu: 200m
 
+additionalCronjobs: []
+  # - name: example-cronjob
+  #   schedule: "* 9 * * *"
+  #   imagePullSecrets:
+  #     - name: regcred
+  #   image:
+  #     repository: "registry.gitlab.int.hextech.io/xxx"
+  #     pullPolicy: IfNotPresent
+  #     tag: "xxx"
+  #   restartPolicy: "OnFailure"
+  #   envFrom:
+  #     - type: secret
+  #       suffix: secret
+  #   resources: {}
+
 configMap:
   config:
     suffix: config
