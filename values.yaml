@@ -180,20 +180,26 @@ cronjob:
   #     memory: 400Mi
   #     cpu: 200m
 
-additionalCronjobs: []
-  # - name: example-cronjob
-  #   schedule: "* 9 * * *"
+additionalCronjobs:
+  enabled: false
+  # default:
+  #   podAnnotation: {}
   #   imagePullSecrets:
   #     - name: regcred
   #   image:
-  #     repository: "registry.gitlab.int.hextech.io/xxx"
+  #     repository: registry.gitlab.int.hextech.io/metazen/extract-new-users-one-day
+  #     tag: "v1.0.1"
   #     pullPolicy: IfNotPresent
-  #     tag: "xxx"
-  #   restartPolicy: "OnFailure"
+  #   restartPolicy: Never
+  #   failedJobsHistoryLimit: 3
   #   envFrom:
+  #     - type: configmap
+  #       suffix: config
   #     - type: secret
   #       suffix: secret
-  #   resources: {}
+  # cronjobs:
+  # - name: example-cronjob
+  #   schedule: "10,20,30 13 * * *"
 
 configMap:
   config:
