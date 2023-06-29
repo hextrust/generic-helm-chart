@@ -108,6 +108,10 @@ spec:
         {{- with .Values.StatefulSet.extraContainers }}
           {{- toYaml . | nindent 8 }}
         {{- end }}
+      {{- with .Values.StatefulSet.volumes }}
+      volumes:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
   volumeClaimTemplates:
   {{- with .Values.StatefulSet.persistenceStorage }}
     {{- toYaml . | nindent 4 }}
