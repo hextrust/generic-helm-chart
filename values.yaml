@@ -212,6 +212,20 @@ configMap:
 #       test3: test3
 #       test4: test4
 
+customConfigMap: {}
+  # name: "hexadmin-api-gateway-route-config"
+  # data: 
+  #   route.yaml: |-
+  #     routes:
+  #       "admin_": "${SVC_ADMIN}"
+  #       "hs2_qa_": "${SVC_INTERNAL_API_GATEWAY}"
+  #       "hs2_eam_": "${SVC_INTERNAL_API_GATEWAY}"
+  #       "hs2_admin_eam_": "${SVC_INTERNAL_API_GATEWAY}"
+  #       "assetMaster_": "${SVC_INTERNAL_API_GATEWAY}"
+  #       "hs2_wallet_": "${SVC_INTERNAL_API_GATEWAY}"
+  #       "hs2_evaluator": "${SVC_INTERNAL_API_GATEWAY}"
+  #       "hs2_initiateTransaction": "${SVC_TX_REQ}"
+
 service:
   enabled: true
   type: ClusterIP
