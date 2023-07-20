@@ -21,8 +21,7 @@ serviceAccount:
 
 pdb:
   enabled: false
-  minAvailable: 1
-  maxUnavailable: 2
+  minAvailable: 50%
 
 deployment:
   enabled: true
@@ -255,7 +254,8 @@ service:
 
 ingress:
   #### Example ####
-  - enabled: false
+  - name: example
+    enabled: false
 #    annotations:
 #      kubernetes.io/ingress.class: nginx
 #    className: "nginx"
@@ -273,7 +273,8 @@ ingress:
 #    - secretName: chart-example-tls
 #      hosts:
 #      - chart-example.local
-  - enabled: false
+  - name: another-example
+    enabled: false
 #    annotations:
 #      kubernetes.io/ingress.class: nginx
 #    className: "nginx"
