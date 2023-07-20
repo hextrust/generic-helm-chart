@@ -19,6 +19,11 @@ serviceAccount:
     #   - metric
 
 
+pdb:
+  enabled: false
+  minAvailable: 1
+  maxUnavailable: 2
+
 deployment:
   enabled: true
   replicaCount: 1
@@ -249,20 +254,43 @@ service:
   
 
 ingress:
-  enabled: false
   #### Example ####
-  # className: nginx
-  # hosts:
-  #   - host: demo.alpha.metazens.xyz
-  #     http:
-  #       paths:
-  #       - backend:
-  #           service:
-  #             name: argocd-server
-  #             port:
-  #               number: 80
-  #         path: /
-  #         pathType: Prefix
+  - enabled: false
+#    annotations:
+#      kubernetes.io/ingress.class: nginx
+#    className: "nginx"
+#    hosts:
+#    - host: chart-example.local
+#      paths:
+#      - path: /
+#        pathType: Prefix
+#        backend:
+#          service:
+#            name: argocd-server
+#            port:
+#              number: 8080
+#    tls:
+#    - secretName: chart-example-tls
+#      hosts:
+#      - chart-example.local
+  - enabled: false
+#    annotations:
+#      kubernetes.io/ingress.class: nginx
+#    className: "nginx"
+#    hosts:
+#    - host: another-example.local
+#      paths:
+#      - path: /
+#        pathType: ImplementationSpecific
+#        backend:
+#           service:
+#             name: argocd-server
+#             port:
+#               number: 80
+#    tls:
+#    - secretName: another-example-tls
+#      hosts:
+#      - another-example.local
 
 externalSecret:
   enabled: false
