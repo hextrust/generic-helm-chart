@@ -26,4 +26,4 @@ jobs:
         env:
           CR_TOKEN: "${{ secrets.BOT_GITHUB_TOKEN }}"
         with:
-          charts_dir: 'charts'
+          charts_dir: charts

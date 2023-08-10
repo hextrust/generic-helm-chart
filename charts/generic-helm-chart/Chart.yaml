@@ -1,0 +1,13 @@
+apiVersion: v2
+name: generic-helm-chart
+description: A Helm chart for hextrust micro-service
+icon: "https://helm.sh/img/helm.svg"
+type: application
+version: "0.3.5"
+appVersion: "0.0.1"
+keywords:
+- generic-helm-chart
+- micro-service
+maintainers:
+- name: Hex Trust DevOps Team
+  url: https://github.com/orgs/hextrust/teams/hextrust-devops-leads

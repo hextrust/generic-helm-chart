@@ -36,15 +36,6 @@ deployment:
   readinessProbe: {}
   startupProbe: {}
   podAnnotations: {}
-  serviceDefault:
-    enabled: false # Enable to allow nginx ingress connect with service in this helm chart while joining service mesh.
-  serviceIntention:
-    enabled: false
-  # serviceIntention:
-  #   enabled: true
-  #   source:
-  #     - sourceName: compliance-checker # Name of source services need to be connected to service in this helm chart while joining service mesh
-  #     - sourceName: api-gateway
   podSecurityContext: {}
   securityContext: {}
   resources: 

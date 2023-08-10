@@ -24,6 +24,6 @@ jobs:
       - name: Run helm chart linter
         run: ct --config hack/ct.yml lint
       - name: Run helm lint
-        run: cd charts && helm lint
+        run: cd charts/generic-helm-chart && helm lint
       - name: Run helm template
-        run: cd charts && helm template .
+        run: cd charts/generic-helm-chart && helm template .
