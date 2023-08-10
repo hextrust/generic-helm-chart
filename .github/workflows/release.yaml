@@ -2,6 +2,10 @@ name: Helm Release
 
 on:
   push:
+    branches:
+      - master
+    paths:
+      - 'charts/**'
 
 jobs:
   helm-release:
