@@ -2,8 +2,6 @@ name: Helm Release
 
 on:
   push:
-    branches:
-      - master
     paths:
       - 'charts/**'
 
@@ -25,5 +23,3 @@ jobs:
         uses: helm/chart-releaser-action@v1.5.0
         env:
           CR_TOKEN: "${{ secrets.BOT_GITHUB_TOKEN }}"
-        with:
-          charts_dir: 'charts'
