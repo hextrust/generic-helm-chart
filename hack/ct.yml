@@ -1,6 +1,8 @@
 helm-extra-args: --timeout 300s
 check-version-increment: true
 debug: true
+chart-dirs:
+  - 'chart'
 validate-maintainers: false
 namespace: default
 release-label: test
