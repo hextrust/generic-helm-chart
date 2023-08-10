@@ -8,7 +8,6 @@ appVersion: "0.0.1"
 keywords:
 - generic-helm-chart
 - micro-service
-- hextrust
 maintainers:
 - name: Hex Trust DevOps Team
   url: https://github.com/orgs/hextrust/teams/hextrust-devops-leads
