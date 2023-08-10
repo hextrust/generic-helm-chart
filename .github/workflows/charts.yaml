@@ -3,7 +3,7 @@ name: Helm chart check
 on:
   pull_request:
     branches:
-      - main
+      - master
 
 jobs:
   helm-lint:
