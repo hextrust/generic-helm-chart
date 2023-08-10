@@ -4,6 +4,8 @@ on:
   pull_request:
     branches:
       - master
+    paths:
+      - 'chart/**'
 
 jobs:
   helm-lint:
@@ -22,6 +24,6 @@ jobs:
       - name: Run helm chart linter
         run: ct --config hack/ct.yml lint
       - name: Run helm lint
-        run: helm lint
+        run: cd chart && helm lint
       - name: Run helm template
-        run: helm template .
+        run: cd chart && helm template .
