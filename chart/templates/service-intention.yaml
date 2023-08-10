@@ -1,0 +1,14 @@
+{{- if .Values.deployment.serviceIntention.enabled -}}
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: {{ include "app.fullname" . }}
+spec:
+  destination:
+    name: {{ include "app.fullname" . }}
+  sources:
+    {{- range .Values.deployment.serviceIntention.source }}
+    - name: {{ .sourceName }}
+      action: allow
+    {{- end }}
+{{- end }}

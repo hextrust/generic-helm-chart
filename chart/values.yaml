@@ -1,0 +1,427 @@
+nameOverride: "generic-helm-chart"
+fullnameOverride: "generic-helm-chart"
+
+cluster: "cluster"
+environment: "environment"
+
+## Labels attach to all resources
+# commonLabels:
+#   label: label
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+  multiServiceAccounts: 
+    enabled: false
+    #### Example ####
+    # names:
+    #   - metric
+
+
+pdb:
+  enabled: false
+  minAvailable: 50%
+
+deployment:
+  enabled: true
+  replicaCount: 1
+  imagePullSecrets:
+    - name: regcred
+  image:
+    repository: ""
+    pullPolicy: IfNotPresent
+    tag: ""
+  livenessProbe: {}
+  readinessProbe: {}
+  startupProbe: {}
+  podAnnotations: {}
+  serviceDefault:
+    enabled: false # Enable to allow nginx ingress connect with service in this helm chart while joining service mesh.
+  serviceIntention:
+    enabled: false
+  # serviceIntention:
+  #   enabled: true
+  #   source:
+  #     - sourceName: compliance-checker # Name of source services need to be connected to service in this helm chart while joining service mesh
+  #     - sourceName: api-gateway
+  podSecurityContext: {}
+  securityContext: {}
+  resources: 
+    requests:
+      memory: 400Mi
+      cpu: 200m
+    limits:
+      memory: 400Mi
+      cpu: 200m
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  # service:
+  #   port:
+  #     - name: http-metric
+  #       containerPort: 8081
+  #       protocol: TCP
+  ## Environment Variables attach to the pod directly
+  # env:
+  #   demo: demo
+
+additionalDeployments: {}
+  # - name:
+  #   replicaCount: 1
+  #   imagePullSecrets:
+  #     - name: regcred
+  #   image:
+  #     repository: ""
+  #     pullPolicy: IfNotPresent
+  #     tag: ""
+  #   livenessProbe: {}
+  #   readinessProbe: {}
+  #   startupProbe: {}
+  #   podAnnotations: {}
+  #   serviceDefault:
+  #     enabled: false # Enable to allow nginx ingress connect with service in this helm chart while joining service mesh.
+  #   serviceIntention:
+  #     enabled: false
+  #   podSecurityContext: {}
+  #   securityContext: {}
+  #   resources: 
+  #     requests:
+  #       memory: 400Mi
+  #       cpu: 200m
+  #     limits:
+  #       memory: 400Mi
+  #       cpu: 200m
+  #   nodeSelector: {}
+  #   tolerations: []
+  #   affinity: {}
+  #   autoscaling:
+  #     enabled: false 
+
+StatefulSet:
+  enabled: false
+  # replicaCount: 1
+  # imagePullSecrets:
+  #   - name: regcred
+  # image:
+  #   repository: ""
+  #   pullPolicy: IfNotPresent
+  #   tag: ""
+  # livenessProbe: {}
+  # readinessProbe: {}
+  # startupProbe: {}
+  # podAnnotations: {}
+  # podSecurityContext: {}
+  # securityContext: {}
+  # resources: 
+  #   requests:
+  #     memory: 400Mi
+  #     cpu: 200m
+  #   limits:
+  #     memory: 400Mi
+  #     cpu: 200m
+  # nodeSelector: {}
+  # tolerations: []
+  # affinity: {}
+  # envFrom:
+  #   - type: configmap
+  #     suffix: config
+  #   - type: configmap
+  #     suffix: keycloak-config
+  #   - type: secret
+  #     suffix: secret
+  # volumeMounts:
+  #   - mountPath: "/db"
+  #     name: sqlite3
+  # persistenceStorage:
+  #   name : sqlite3
+  #   accessMode: ["ReadWriteOnce"]
+  #   storageClass: gp3-retain
+  #   volumeMode: Filesystem
+  #   size : 500M
+  # # volumes:
+  # #   - name: soft-kms
+  # #     persistentVolumeClaim:
+  # #       claimName: soft-kms
+  # extraContainers: []
+  #   #### Example ####
+  #   # - name: dummy-container
+  #   #   image: alpine:3.8
+  #   #   command: [sh, -c]
+  #   #   args:
+  #   #     - wget -qO- https://get.helm.sh/helm-v2.16.1-linux-amd64.tar.gz | tar -xvzf - &&
+  #   #       mv linux-amd64/helm /custom-tools/
+  #   #   volumeMounts:
+  #   #     - mountPath: /custom-tools
+  #   #       name: custom-tools
+  # initContainers: []
+  #   #### Example ####
+  #   # - name: init-myservice
+  #   #   image: busybox:1.28
+  #   #   command: ['sh', '-c', "until nslookup myservice.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for myservice; sleep 2; done"]
+  #   # - name: init-mydb
+  #   #   image: busybox:1.28
+  #   #   command: ['sh', '-c', "until nslookup mydb.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for mydb; sleep 2; done"]
+
+cronjob: 
+  enabled: false
+  # schedule: "* 9 * * *"
+  # imagePullSecrets:
+  #   - name: regcred-operations
+  # image:
+  #   repository: "registry.gitlab.int.hextech.io/operations/htm-nav"
+  #   pullPolicy: IfNotPresent
+  #   tag: "ff66184d"
+  # restartPolicy: "OnFailure"
+  # envFrom:
+  #   - type: secret
+  #     suffix: secret
+  # resources: 
+  #   requests:
+  #     memory: 400Mi
+  #     cpu: 200m
+  #   limits:
+  #     memory: 400Mi
+  #     cpu: 200m
+
+additionalCronjobs:
+  enabled: false
+  # default:
+  #   podAnnotation: {}
+  #   imagePullSecrets:
+  #     - name: regcred
+  #   image:
+  #     repository: registry.gitlab.int.hextech.io/metazen/extract-new-users-one-day
+  #     tag: "v1.0.1"
+  #     pullPolicy: IfNotPresent
+  #   restartPolicy: Never
+  #   failedJobsHistoryLimit: 3
+  #   envFrom:
+  #     - type: configmap
+  #       suffix: config
+  #     - type: secret
+  #       suffix: secret
+  # cronjobs:
+  # - name: example-cronjob
+  #   schedule: "10,20,30 13 * * *"
+
+configMap:
+  config:
+    suffix: config
+    data: {}
+      # test1: test1
+      # test2: test2
+#   - suffix: keycloak-config
+#     data:
+#       test3: test3
+#       test4: test4
+
+customConfigMap: {}
+  # name: "hexadmin-api-gateway-route-config"
+  # data: 
+  #   route.yaml: |-
+  #     routes:
+  #       "admin_": "${SVC_ADMIN}"
+  #       "hs2_qa_": "${SVC_INTERNAL_API_GATEWAY}"
+  #       "hs2_eam_": "${SVC_INTERNAL_API_GATEWAY}"
+  #       "hs2_admin_eam_": "${SVC_INTERNAL_API_GATEWAY}"
+  #       "assetMaster_": "${SVC_INTERNAL_API_GATEWAY}"
+  #       "hs2_wallet_": "${SVC_INTERNAL_API_GATEWAY}"
+  #       "hs2_evaluator": "${SVC_INTERNAL_API_GATEWAY}"
+  #       "hs2_initiateTransaction": "${SVC_TX_REQ}"
+
+service:
+  enabled: true
+  type: ClusterIP
+  port: 
+    - port: 8080
+      targetPort: http
+      protocol: TCP
+      name: http
+    - port: 8081
+      targetPort: http-metric
+      protocol: TCP
+      name: http
+  multiServices:
+    enabled: false
+    #### Example ####
+    # port: 
+    #   - port: 8082
+    #     targetPort: http-admin
+    #     protocol: TCP
+    #     name: admin
+  
+
+ingress:
+  #### Example ####
+  - name: example
+    enabled: false
+#    annotations:
+#      kubernetes.io/ingress.class: nginx
+#    className: "nginx"
+#    hosts:
+#    - host: chart-example.local
+#      paths:
+#      - path: /
+#        pathType: Prefix
+#        backend:
+#          service:
+#            name: argocd-server
+#            port:
+#              number: 8080
+#    tls:
+#    - secretName: chart-example-tls
+#      hosts:
+#      - chart-example.local
+  - name: another-example
+    enabled: false
+#    annotations:
+#      kubernetes.io/ingress.class: nginx
+#    className: "nginx"
+#    hosts:
+#    - host: another-example.local
+#      paths:
+#      - path: /
+#        pathType: ImplementationSpecific
+#        backend:
+#           service:
+#             name: argocd-server
+#             port:
+#               number: 80
+#    tls:
+#    - secretName: another-example-tls
+#      hosts:
+#      - another-example.local
+
+externalSecret:
+  enabled: false
+  #### Example ####
+  # suffix: secret
+  # secretStore: secretstore-alpha
+  # secrets:
+  #   - secretKey: password
+  #     remoteRef:
+  #       key: /demo/postgresql/password
+  #   - secretKey: username
+  #     remoteRef:
+  #       key: /demo/postgresql/username
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 3
+  targetCPUScaling: 80
+  targetMemScaling: 80
+  customTargets: []
+  scaleTarget: {}
+  #### Example ####
+  # minReplicas: 1
+  # maxReplicas: 10
+  #
+  # Default Targets for Scaling are CPU/MEM
+  # targetCPUScaling: 80
+  # targetMemScaling: 80
+  #
+  # You can also specify your own types of targets:
+  # customTargets: []
+  #
+  # HPA Needs to be configured more distinctly if used in the context
+  # of an ArgoCD Rollout (different from ArgoCD Standard)
+  # 
+  # scaleTarget:
+  #   apiVersion: argoproj.io/v1alpha1 OR apps/v1
+  #   kind: Rollout OR Deployment
+
+rustDBMigration:
+  enabled: false
+  podAnnotations: {}
+
+goDBMigration:
+  enabled: false
+  podAnnotations: {}
+  #### Example ####
+  # externalSecret:
+  #   secretStore: secretstore-alpha
+  #   secrets:
+  #     - secretKey: gitlab_token_username
+  #       remoteRef:
+  #         key: /gitlab/metazen/accesstoken/username
+  #     - secretKey: gitlab_token_password
+  #       remoteRef:
+  #         key: /gitlab/metazen/accesstoken/password
+  #     - secretKey: username
+  #       remoteRef:
+  #         key: /demo/postgresql/dbmigration/username
+  #     - secretKey: password
+  #       remoteRef:
+  #         key: /demo/postgresql/dbmigration/password
+  # job:
+  #   git:
+  #     path: "gitlab.int.hextech.io/602/db/migrations"
+  #   imagePullSecrets:
+  #     - name: regcred
+  #   env:
+  #     DB_URL: ""
+  #     PGSSLMODE: "disable"
+
+volumes:
+  enabled: false
+  #### Example ####
+  # pvc:
+  #   - name: soft-kms
+  #     className: gp2
+  #     volumeMode: Filesystem
+  #     storage: 10Gi
+  #     accessModes: 
+  #       - ReadWriteOnce
+
+serviceMonitor:
+  enabled: false
+  #### Example ####
+  # enabled: true
+  # prometheusName: metazen
+  # namespaceSelector:
+  #   kubernetes.io/metadata.name: metazen-alpha
+  # matchLabels:
+  #   app: infra-test
+  # endpoints:
+  #   - port: http
+  #     path: /metrics 
+  #     interval: 60s
+  #     honorLabels: true
+  #     scrapeTimeout: 10s
+  #     relabelings:
+  #       - action: keep
+  #         sourceLabels: [__meta_kubernetes_pod_container_name]
+  #         regex: "something"
+  #     metricRelabelings:
+  #       - sourceLabels: [__meta_kubernetes_service_label_cluster]
+  #         targetLabel: cluster
+  #         regex: (.*)
+  #         replacement: ${1}
+  #         action: replace
+
+podMonitor:
+  enabled: false
+  #### Example ####
+  # enabled: true
+  # namespaceSelector:
+  #   kubernetes.io/metadata.name: metazen-alpha
+  # matchLabels:
+  #   app: infra-test
+  # endpoints:
+  #   - port: http
+  #     path: /metrics 
+  #     interval: 60s
+  #     honorLabels: true
+  #     scrapeTimeout: 10s
+  #     relabelings:
+  #       - action: keep
+  #         sourceLabels: [__meta_kubernetes_pod_container_name]
+  #         regex: "something"
+  #     metricRelabelings:
+  #       - sourceLabels: [__meta_kubernetes_service_label_cluster]
+  #         targetLabel: cluster
+  #         regex: (.*)
+  #         replacement: ${1}
+  #         action: replace

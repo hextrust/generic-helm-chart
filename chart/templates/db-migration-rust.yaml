@@ -1,0 +1,48 @@
+{{- $tag := (.Values.deployment.image).tag }}
+{{- if and (.Values.rustDBMigration.enabled) ($tag) }}
+{{- $job := .Values.rustDBMigration.job }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "app.fullname" . }}-db-migration
+  annotations:
+    argocd.argoproj.io/hook: Sync
+    argocd.argoproj.io/sync-wave: "2"
+    argocd.argoproj.io/hook-delete-policy: HookSucceeded
+  labels:
+    {{- include "app.selectorLabels" . | nindent 6 }}
+spec:
+  backoffLimit: 0
+  template:
+    metadata:
+      labels:
+        db-migration: "true"
+      annotations:
+      {{- with .Values.goDBMigration.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      {{- with $job.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext: {}
+      restartPolicy: Never
+      containers:
+        - name: migrate-{{ include "app.name" . }}
+          image: rust:1.58
+          imagePullPolicy: IfNotPresent
+          command:
+            - /bin/sh
+            - -c
+            - > 
+              apt-get update \
+              && apt-get install -y sqlite3 libsqlite3-dev && \
+              cargo install diesel_cli && \
+              diesel migration run --database-url $DB_URL --migration-dir $MIGRATIONS_DIR
+          env:
+            - name: DB_URL
+              value: {{ $job.env.DB_URL | default "file:test.db" }}
+            - name: MIGRATIONS_DIR
+              value: {{ $job.env.MIGRATIONS_DIR | default "migrations/sqlite" }}
+{{- end }}
