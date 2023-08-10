@@ -2,8 +2,6 @@ name: Helm Release
 
 on:
   push:
-    paths:
-      - 'charts/**'
 
 jobs:
   helm-release:
@@ -11,8 +9,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
 
       - name: Configure Git
         run: |
