@@ -5,7 +5,7 @@ on:
     branches:
       - master
     paths:
-      - 'chart/**'
+      - 'charts/**'
 
 jobs:
   helm-release:
@@ -26,4 +26,4 @@ jobs:
         env:
           CR_TOKEN: "${{ secrets.BOT_GITHUB_TOKEN }}"
         with:
-          charts_dir: 'chart'
+          charts_dir: 'charts'

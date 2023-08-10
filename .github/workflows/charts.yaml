@@ -5,7 +5,7 @@ on:
     branches:
       - master
     paths:
-      - 'chart/**'
+      - 'charts/**'
 
 jobs:
   helm-lint:
@@ -24,6 +24,6 @@ jobs:
       - name: Run helm chart linter
         run: ct --config hack/ct.yml lint
       - name: Run helm lint
-        run: cd chart && helm lint
+        run: cd charts && helm lint
       - name: Run helm template
-        run: cd chart && helm template .
+        run: cd charts && helm template .
