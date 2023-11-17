@@ -12,7 +12,7 @@ serviceAccount:
   create: true
   annotations: {}
   name: ""
-  multiServiceAccounts: 
+  multiServiceAccounts:
     enabled: false
     #### Example ####
     # names:
@@ -38,7 +38,7 @@ deployment:
   podAnnotations: {}
   podSecurityContext: {}
   securityContext: {}
-  resources: 
+  resources:
     requests:
       memory: 400Mi
       cpu: 200m
@@ -76,7 +76,7 @@ additionalDeployments: {}
   #     enabled: false
   #   podSecurityContext: {}
   #   securityContext: {}
-  #   resources: 
+  #   resources:
   #     requests:
   #       memory: 400Mi
   #       cpu: 200m
@@ -87,7 +87,7 @@ additionalDeployments: {}
   #   tolerations: []
   #   affinity: {}
   #   autoscaling:
-  #     enabled: false 
+  #     enabled: false
 
 StatefulSet:
   enabled: false
@@ -104,7 +104,7 @@ StatefulSet:
   # podAnnotations: {}
   # podSecurityContext: {}
   # securityContext: {}
-  # resources: 
+  # resources:
   #   requests:
   #     memory: 400Mi
   #     cpu: 200m
@@ -156,7 +156,7 @@ StatefulSet:
   #   #   image: busybox:1.28
   #   #   command: ['sh', '-c', "until nslookup mydb.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for mydb; sleep 2; done"]
 
-cronjob: 
+cronjob:
   enabled: false
   # schedule: "* 9 * * *"
   # imagePullSecrets:
@@ -169,7 +169,7 @@ cronjob:
   # envFrom:
   #   - type: secret
   #     suffix: secret
-  # resources: 
+  # resources:
   #   requests:
   #     memory: 400Mi
   #     cpu: 200m
@@ -212,7 +212,7 @@ configMap:
 
 customConfigMap: {}
   # name: "hexadmin-api-gateway-route-config"
-  # data: 
+  # data:
   #   route.yaml: |-
   #     routes:
   #       "admin_": "${SVC_ADMIN}"
@@ -227,7 +227,7 @@ customConfigMap: {}
 service:
   enabled: true
   type: ClusterIP
-  port: 
+  port:
     - port: 8080
       targetPort: http
       protocol: TCP
@@ -239,12 +239,12 @@ service:
   multiServices:
     enabled: false
     #### Example ####
-    # port: 
+    # port:
     #   - port: 8082
     #     targetPort: http-admin
     #     protocol: TCP
     #     name: admin
-  
+
 
 ingress:
   #### Example ####
@@ -321,7 +321,7 @@ autoscaling:
   #
   # HPA Needs to be configured more distinctly if used in the context
   # of an ArgoCD Rollout (different from ArgoCD Standard)
-  # 
+  #
   # scaleTarget:
   #   apiVersion: argoproj.io/v1alpha1 OR apps/v1
   #   kind: Rollout OR Deployment
@@ -366,7 +366,7 @@ volumes:
   #     className: gp2
   #     volumeMode: Filesystem
   #     storage: 10Gi
-  #     accessModes: 
+  #     accessModes:
   #       - ReadWriteOnce
 
 serviceMonitor:
@@ -380,7 +380,7 @@ serviceMonitor:
   #   app: infra-test
   # endpoints:
   #   - port: http
-  #     path: /metrics 
+  #     path: /metrics
   #     interval: 60s
   #     honorLabels: true
   #     scrapeTimeout: 10s
@@ -405,7 +405,7 @@ podMonitor:
   #   app: infra-test
   # endpoints:
   #   - port: http
-  #     path: /metrics 
+  #     path: /metrics
   #     interval: 60s
   #     honorLabels: true
   #     scrapeTimeout: 10s
