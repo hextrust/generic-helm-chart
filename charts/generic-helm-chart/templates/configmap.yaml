@@ -5,7 +5,13 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
+  {{- if $val.name }}
+  name: {{ $val.name }}
+  {{- else if $val.suffix }}
   name: {{ $fullname }}-{{ $val.suffix }}
+  {{- else }}
+  name: {{ $fullname }}
+  {{- end }}
   labels:
     {{- $labels | nindent 4 }}
 data:

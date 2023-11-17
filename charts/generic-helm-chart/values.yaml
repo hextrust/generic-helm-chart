@@ -116,9 +116,11 @@ StatefulSet:
   # affinity: {}
   # envFrom:
   #   - type: configmap
+  #     name: ""
   #     suffix: config
   #   - type: configmap
-  #     suffix: keycloak-config
+  #     name: "global-configuration"
+  #     suffix: ""
   #   - type: secret
   #     suffix: secret
   # volumeMounts:
@@ -198,6 +200,7 @@ additionalCronjobs:
 
 configMap:
   config:
+    name: ""
     suffix: config
     data: {}
       # test1: test1

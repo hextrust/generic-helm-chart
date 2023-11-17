@@ -99,10 +99,22 @@ spec:
             {{- range $v := .Values.deployment.envFrom }}
             {{- if eq $v.type "configmap" }}
             - configMapRef:
+              {{- if $v.name }}
+                name: {{ $v.name }}
+              {{- else if $v.suffix }}
                 name: {{ $fullname }}-{{ $v.suffix }}
+              {{- else }}
+                name: {{$fullname}}
+              {{- end }}
             {{- else if eq $v.type "secret" }}
             - secretRef:
+              {{- if $v.name }}
+                name: {{ $v.name }}
+              {{- else if $v.suffix }}
                 name: {{ $fullname }}-{{ $v.suffix }}
+              {{- else }}
+                name: {{$fullname}}
+              {{- end }}
             {{- end }}
             {{- end }}
           {{- end }}
