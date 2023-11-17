@@ -2,7 +2,7 @@
 
 usage() {
     if [[ -z "$1" ]]; then
-        # General usage message 
+        # General usage message
         echo "Please provide PACKAGE_REGISTRY_USER and PACKAGE_REGISTRY_PASSWORD"
     else
         echo "$1"

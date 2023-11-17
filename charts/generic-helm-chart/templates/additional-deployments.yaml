@@ -16,7 +16,7 @@ spec:
   replicas: {{ $deployment.replicaCount }}
   {{- end }}
   {{- with $deployment.strategy }}
-  strategy: 
+  strategy:
   {{- toYaml . | nindent 4 }}
   {{- end }}
   selector:
@@ -47,7 +47,7 @@ spec:
           {{- include .template $ | nindent 8 }}
         {{- else }}
         - name: {{ .name }}
-          command: 
+          command:
             {{- toYaml .command | nindent 12 }}
           image: {{ .image }}
           {{- if .volumeMounts }}
@@ -77,9 +77,9 @@ spec:
             - name: {{ .name }}
               containerPort: {{ .containerPort }}
               protocol: {{ .protocol }}
-            {{- end }}  
+            {{- end }}
           {{- end }}
-          env: 
+          env:
           - name: POD_NAME
             valueFrom:
               fieldRef:
@@ -120,11 +120,11 @@ spec:
             {{- end }}
           {{- end }}
           {{- with $deployment.livenessProbe }}
-          livenessProbe: 
+          livenessProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           {{- with $deployment.readinessProbe }}
-          readinessProbe: 
+          readinessProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           resources:
