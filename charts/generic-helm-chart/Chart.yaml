@@ -9,8 +9,12 @@ keywords:
 - generic-helm-chart
 - micro-service
 maintainers:
-- name: Hex Trust DevOps Team
-  url: https://github.com/orgs/hextrust/teams/hextrust-devops-leads
-- name: Aaron Baideme
+- name: mkcc6  # marcus cheng
+  url: https://github.com/mkcc6
+  email: marcus.cheng@hextrust.com
+- name: ryanth2022  # Ryan (Phuc Truong)
+  url: https://github.com/ryanth2022
+  email: phuc.truong@hextrust.com
+- name: AaronForce1  # Aaron Baideme
   url: https://github.com/aaronforce1
   email: avbaideme@proton.me
