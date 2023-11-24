@@ -13,7 +13,7 @@ spec:
       targetPort: {{ .targetPort }}
       protocol: {{ .protocol }}
       name: {{ .name }}
-    {{- end }}  
+    {{- end }}
   selector:
     {{- include "app.selectorLabels" . | nindent 4 }}
 {{- end }}

@@ -16,7 +16,7 @@ spec:
   replicas: {{ $deployment.replicaCount }}
   {{- end }}
   {{- with $deployment.strategy }}
-  strategy: 
+  strategy:
   {{- toYaml . | nindent 4 }}
   {{- end }}
   selector:
@@ -47,7 +47,7 @@ spec:
           {{- include .template $ | nindent 8 }}
         {{- else }}
         - name: {{ .name }}
-          command: 
+          command:
             {{- toYaml .command | nindent 12 }}
           image: {{ .image }}
           {{- if .volumeMounts }}
@@ -77,9 +77,9 @@ spec:
             - name: {{ .name }}
               containerPort: {{ .containerPort }}
               protocol: {{ .protocol }}
-            {{- end }}  
+            {{- end }}
           {{- end }}
-          env: 
+          env:
           - name: POD_NAME
             valueFrom:
               fieldRef:
@@ -100,19 +100,31 @@ spec:
             {{- range $v := $deployment.envFrom }}
             {{- if eq $v.type "configmap" }}
             - configMapRef:
+              {{- if $v.name }}
+                name: {{ $v.name }}
+              {{- else if $v.suffix }}
                 name: {{ $fullname }}-{{ $v.suffix }}
+              {{- else }}
+                name: {{$fullname}}
+              {{- end }}
             {{- else if eq $v.type "secret" }}
             - secretRef:
+              {{- if $v.name }}
+                name: {{ $v.name }}
+              {{- else if $v.suffix }}
                 name: {{ $fullname }}-{{ $v.suffix }}
+              {{- else }}
+                name: {{$fullname}}
+              {{- end }}
             {{- end }}
             {{- end }}
           {{- end }}
           {{- with $deployment.livenessProbe }}
-          livenessProbe: 
+          livenessProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           {{- with $deployment.readinessProbe }}
-          readinessProbe: 
+          readinessProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           resources:

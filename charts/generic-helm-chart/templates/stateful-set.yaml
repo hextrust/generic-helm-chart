@@ -17,7 +17,7 @@ spec:
   replicas: {{ .Values.StatefulSet.replicaCount }}
   serviceName: {{ include "app.fullname" . }}
   {{- with .Values.StatefulSet.strategy }}
-  updateStrategy: 
+  updateStrategy:
   {{- toYaml . | nindent 4 }}
   {{- end }}
   template:
@@ -61,9 +61,9 @@ spec:
             - name: {{ .name }}
               containerPort: {{ .containerPort }}
               protocol: {{ .protocol }}
-            {{- end }}  
+            {{- end }}
           {{- end }}
-          env: 
+          env:
           - name: POD_NAME
             valueFrom:
               fieldRef:
@@ -84,19 +84,31 @@ spec:
             {{- range $v := .Values.StatefulSet.envFrom }}
             {{- if eq $v.type "configmap" }}
             - configMapRef:
+              {{- if $v.name }}
+                name: {{ $v.name }}
+              {{- else if $v.suffix }}
                 name: {{ $fullname }}-{{ $v.suffix }}
+              {{- else }}
+                name: {{$fullname}}
+              {{- end }}
             {{- else if eq $v.type "secret" }}
             - secretRef:
+              {{- if $v.name }}
+                name: {{ $v.name }}
+              {{- else if $v.suffix }}
                 name: {{ $fullname }}-{{ $v.suffix }}
+              {{- else }}
+                name: {{$fullname}}
+              {{- end }}
             {{- end }}
             {{- end }}
           {{- end }}
           {{- with .Values.StatefulSet.livenessProbe }}
-          livenessProbe: 
+          livenessProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           {{- with .Values.StatefulSet.readinessProbe }}
-          readinessProbe: 
+          readinessProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           resources:

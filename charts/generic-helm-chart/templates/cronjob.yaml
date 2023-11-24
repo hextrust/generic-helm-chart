@@ -30,7 +30,7 @@ spec:
                 - {{ . }}
                 {{- end }}
               {{- end }}
-              env: 
+              env:
               - name: POD_NAME
                 valueFrom:
                   fieldRef:
