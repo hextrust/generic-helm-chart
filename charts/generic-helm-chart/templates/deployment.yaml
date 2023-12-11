@@ -44,6 +44,8 @@ spec:
         {{- range . }}
         {{- if eq .type "template" }}
           {{- include .template $values | nindent 8 }}
+        {{- else if eq .type "spec" }}
+          {{- toYaml .spec | nindent 8 }}}
         {{- else }}
         - name: {{ .name }}
           command:
