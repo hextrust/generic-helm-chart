@@ -60,6 +60,7 @@ A Generic Helm Chart to support easy deployment of micro-services
 | ingress[0].name | string | `"example"` |  |
 | ingress[1].enabled | bool | `false` |  |
 | ingress[1].name | string | `"another-example"` |  |
+| jobs | list | `[]` |  |
 | nameOverride | string | `"generic-helm-chart"` |  |
 | pdb.enabled | bool | `false` |  |
 | pdb.minAvailable | string | `"50%"` |  |

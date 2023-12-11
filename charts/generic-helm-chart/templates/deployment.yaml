@@ -4,9 +4,14 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "app.fullname" . }}
-  {{- if .Values.goDBMigration.enabled }}
+  {{- if or .Values.goDBMigration.enabled .Values.annotations}}
   annotations:
+  {{- if .Values.goDBMigration.enabled }}
     argocd.argoproj.io/sync-wave: "4"
+  {{- end }}
+  {{- if .Values.annotations }}
+    {{- toYaml .Values.annotations | nindent 4 }}
+  {{- end }}
   {{- end }}
   labels:
     {{- include "app.labels" . | nindent 4 }}
