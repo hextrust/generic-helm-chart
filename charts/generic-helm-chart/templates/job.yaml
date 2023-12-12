@@ -1,0 +1,11 @@
+{{- $jobs := .Values.jobs }}
+{{- range $jobs }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  {{ toYaml .metadata | nindent 4 }}
+spec:
+  backoffLimit: 0
+  template:
+    {{ toYaml .template | nindent 6 }}
+{{- end }}
