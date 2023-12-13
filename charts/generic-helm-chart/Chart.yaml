@@ -3,7 +3,7 @@ name: generic-helm-chart
 description: A Generic Helm Chart to support easy deployment of micro-services
 icon: "https://helm.sh/img/helm.svg"
 type: application
-version: "0.3.7"
+version: "0.3.8"
 appVersion: "0.0.1"
 keywords:
 - generic-helm-chart
