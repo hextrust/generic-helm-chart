@@ -97,7 +97,11 @@ spec:
           {{- if .Values.deployment.env }}
           {{- range $k, $v := .Values.deployment.env }}
           - name: {{ $k }}
-            value: {{ $v }}
+            {{- if kindIs "string" $v }}
+            value: {{ $v | quote }}
+            {{- else }}
+            {{- toYaml $v | nindent 12 }}
+            {{- end }}
           {{- end }}
           {{- end }}
           {{- if .Values.deployment.envFrom }}
