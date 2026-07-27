@@ -75,7 +75,11 @@ spec:
           {{- if .Values.StatefulSet.env }}
           {{- range $k, $v := .Values.StatefulSet.env }}
           - name: {{ $k }}
-            value: {{ $v }}
+            {{- if kindIs "string" $v }}
+            value: {{ $v | quote }}
+            {{- else }}
+            {{- toYaml $v | nindent 12 }}
+            {{- end }}
           {{- end }}
           {{- end }}
           {{- if .Values.StatefulSet.envFrom }}
